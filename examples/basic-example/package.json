@@ -1,0 +1,24 @@
+{
+    "name": "basic-example",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "clean": "",
+        "start": "ts-node server.ts",
+        "dev": "npm run start",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "npx parcel build src/* --out-dir dist/ --no-source-maps"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@types/express": "^4.17.7",
+        "express": "^4.17.1",
+        "plugin-frame": "file:../../.",
+        "parcel-bundler": "^1.12.5"
+    },
+    "devDependencies": {
+        "ts-node": "^8.10.2"
+    }
+}
