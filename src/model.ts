@@ -16,6 +16,6 @@ export interface RemotePluginOptions {
 }
 
 export interface HostPluginOptions {
-  useCompiled?: boolean;
+  frameSrc?: URL;
   container?: Element;
 }

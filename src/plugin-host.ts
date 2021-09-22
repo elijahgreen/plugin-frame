@@ -5,29 +5,25 @@ export class PluginHost {
   private code: string;
   private iframe: HTMLIFrameElement;
   private remoteOrigin: string;
-  private host: URL;
   private remoteMethods: string[] = [];
   private api: PluginInterface;
   private defaultOptions: HostPluginOptions = {
-    useCompiled: false,
     container: document.body
   };
-  private options;
+  private options: HostPluginOptions;
   public child: any = {};
   public isReady = false;
   public readyFuncs: (() => void)[] = [];
   private compiled = "<TEMPLATE>";
   constructor(
-    host: URL,
     code: string,
     api: PluginInterface,
     options?: HostPluginOptions
   ) {
-    this.remoteOrigin = host.origin;
-    this.host = host;
     this.code = code;
     this.api = api;
     this.options = options || this.defaultOptions;
+    this.remoteOrigin = this.options.frameSrc?.origin || "*";
     this.iframe = this.createIframe();
   }
 
@@ -36,17 +32,41 @@ export class PluginHost {
     iframe.frameBorder = '0';
     iframe.width = '0';
     iframe.height = '0';
-    iframe.src = this.host.href;
     iframe.sandbox.add('allow-scripts');
     iframe.sandbox.add('allow-same-origin');
     iframe.onload = this.iframeOnLoad.bind(this);
-    this.options.container?.append(iframe);
 
-    if (this.options.useCompiled) {
-      console.log(this.compiled);
+    if (this.options.frameSrc) {
+      iframe.src = this.options.frameSrc.href;
+      this.options.container?.append(iframe);
+      return iframe;
     }
 
+    const srcdoc = this.getSrcDoc();
+    iframe.setAttribute('srcdoc', srcdoc);
+    this.options.container?.append(iframe);
     return iframe;
+  }
+
+  private getSrcDoc()
+  {
+    let srcdoc = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script type="module">
+    <INLINE>
+  </scr` + `ipt>
+</head>
+<body></body>
+</html>
+  `;
+
+    srcdoc = srcdoc
+      .replace('<INLINE>', this.compiled);
+
+    return srcdoc;
   }
 
   private async portOnMessage(event: MessageEvent) {
