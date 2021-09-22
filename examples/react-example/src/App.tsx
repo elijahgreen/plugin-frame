@@ -5,7 +5,7 @@ import { PluginHost, PluginInterface, HostPluginOptions } from 'plugin-frame';
 
 interface NetworkRequestInterface {
   body: Blob;
-  headers: {[k: string]: string;}
+  headers: { [k: string]: string };
   status: number;
   statusText: string;
   url: string;
@@ -37,37 +37,33 @@ const App: React.FC = () => {
       },
     };
     // eslint-disable-next-line no-restricted-globals
-    const url = new URL(`${location.href}remote.html`);
-    const code =
-    "application.test(10)";
+    const code = 'application.test(10)';
 
     if (pluginref.current) {
-      const options: HostPluginOptions =  {
-        container: pluginref.current
-      }
-      const host = new PluginHost(url, code, apis, options);
+      const options: HostPluginOptions = {
+        container: pluginref.current,
+      };
+      const host = new PluginHost(code, apis, options);
       setPluginHost(host);
       host.ready(() => {
         setPluginConnected(true);
       });
     }
-  }, [pluginref])
+  }, [pluginref]);
 
   React.useEffect(() => {
     const callPlugin = async () => {
       if (pluginHost && pluginConnected) {
-        if (await pluginHost?.methodNameExists("test")) {
+        if (await pluginHost?.methodNameExists('test')) {
           pluginHost.child.test(20);
         }
       }
     };
     callPlugin();
-  }, [pluginHost, pluginConnected])
+  }, [pluginHost, pluginConnected]);
   return (
     <div className="App">
-      <div ref={pluginref}>
-
-      </div>
+      <div ref={pluginref}></div>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -84,6 +80,6 @@ const App: React.FC = () => {
       </header>
     </div>
   );
-}
+};
 
 export default App;

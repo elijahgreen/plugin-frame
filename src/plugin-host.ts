@@ -8,22 +8,18 @@ export class PluginHost {
   private remoteMethods: string[] = [];
   private api: PluginInterface;
   private defaultOptions: HostPluginOptions = {
-    container: document.body
+    container: document.body,
   };
   private options: HostPluginOptions;
   public child: any = {};
   public isReady = false;
   public readyFuncs: (() => void)[] = [];
-  private compiled = "<TEMPLATE>";
-  constructor(
-    code: string,
-    api: PluginInterface,
-    options?: HostPluginOptions
-  ) {
+  private compiled = '<TEMPLATE>';
+  constructor(code: string, api: PluginInterface, options?: HostPluginOptions) {
     this.code = code;
     this.api = api;
     this.options = options || this.defaultOptions;
-    this.remoteOrigin = this.options.frameSrc?.origin || "*";
+    this.remoteOrigin = this.options.frameSrc?.origin || '*';
     this.iframe = this.createIframe();
   }
 
@@ -32,8 +28,7 @@ export class PluginHost {
     iframe.frameBorder = '0';
     iframe.width = '0';
     iframe.height = '0';
-    iframe.sandbox.add('allow-scripts');
-    iframe.sandbox.add('allow-same-origin');
+    (iframe as any).sandbox = 'allow-scripts allow-same-origin';
     iframe.onload = this.iframeOnLoad.bind(this);
 
     if (this.options.frameSrc) {
@@ -48,23 +43,23 @@ export class PluginHost {
     return iframe;
   }
 
-  private getSrcDoc()
-  {
-    let srcdoc = `
+  private getSrcDoc() {
+    let srcdoc =
+      `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <script type="module">
     <INLINE>
-  </scr` + `ipt>
+  </scr` +
+      `ipt>
 </head>
 <body></body>
 </html>
   `;
 
-    srcdoc = srcdoc
-      .replace('<INLINE>', this.compiled);
+    srcdoc = srcdoc.replace('<INLINE>', this.compiled);
 
     return srcdoc;
   }
@@ -89,7 +84,6 @@ export class PluginHost {
         }
         break;
     }
-
   }
 
   private iframeOnLoad() {

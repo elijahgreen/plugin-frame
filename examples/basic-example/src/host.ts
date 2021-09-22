@@ -25,5 +25,4 @@ const code =
   "application.networkRequest('http://api.napster.com/v2.2/artists/top?apikey=YTkxZTRhNzAtODdlNy00ZjMzLTg0MWItOTc0NmZmNjU4Yzk4').then(d => {console.log(d);});";
 
 let host = new PluginHost(code, apis);
-host.ready(async () => {
-});
+host.ready(async () => {});

@@ -7,7 +7,10 @@ module.exports = {
         generateBundle(opts, bundle) {
             const entry = Object.values(bundle).find((chunk) => chunk.isEntry);
             const file = path.parse(opts.file).base
-            bundle[file].code = bundle[file].code.replace('"<TEMPLATE>"', JSON.stringify(entry.code));
+            bundle[file].code = bundle[file].code.replace(
+              "'<TEMPLATE>'",
+              JSON.stringify(entry.code)
+            );
         }
     });
     return config;
