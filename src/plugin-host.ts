@@ -47,8 +47,7 @@ export class PluginHost {
     });
   }
 
-  public destroy()
-  {
+  public destroy() {
     this.iframe.remove();
     this.port?.close();
   }
