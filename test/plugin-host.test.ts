@@ -7,4 +7,11 @@ describe('PluginHost', () => {
     expect(pluginHost).not.toBeNull();
     pluginHost.destroy();
   });
+
+  it('should create iframe', () => {
+    const pluginHost = new PluginHost('', {});
+    const element = document.querySelectorAll('iframe')[0];
+    expect(element).not.toBeNull();
+    pluginHost.destroy();
+  });
 });
