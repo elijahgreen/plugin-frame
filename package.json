@@ -38,10 +38,6 @@
     {
       "path": "dist/plugin-frame.cjs.production.min.js",
       "limit": "10 KB"
-    },
-    {
-      "path": "dist/plugin-frame.esm.js",
-      "limit": "10 KB"
     }
   ],
   "devDependencies": {

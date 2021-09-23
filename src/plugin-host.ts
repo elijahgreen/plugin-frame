@@ -23,6 +23,36 @@ export class PluginHost {
     this.iframe = this.createIframe();
   }
 
+  public ready(readyFunc: () => void) {
+    if (this.isReady) {
+      readyFunc();
+    } else {
+      this.readyFuncs.push(readyFunc);
+    }
+  }
+
+  public methodNameExists(name: string) {
+    return new Promise<boolean>((res, rej) => {
+      const channel = new MessageChannel();
+      channel.port1.onmessage = ({ data }) => {
+        channel.port1.close();
+        if (data.error) {
+          rej(data.error);
+        } else {
+          res(data.result);
+        }
+      };
+
+      this.port?.postMessage({ type: 'exists', name: name }, [channel.port2]);
+    });
+  }
+
+  public destroy()
+  {
+    this.iframe.remove();
+    this.port?.close();
+  }
+
   private createIframe() {
     let iframe = document.createElement('iframe');
     iframe.frameBorder = '0';
@@ -136,30 +166,6 @@ export class PluginHost {
     this.remoteMethods.forEach(name => {
       this.child[name] = this.generateFunction(name);
     });
-  }
-
-  public methodNameExists(name: string) {
-    return new Promise<boolean>((res, rej) => {
-      const channel = new MessageChannel();
-      channel.port1.onmessage = ({ data }) => {
-        channel.port1.close();
-        if (data.error) {
-          rej(data.error);
-        } else {
-          res(data.result);
-        }
-      };
-
-      this.port?.postMessage({ type: 'exists', name: name }, [channel.port2]);
-    });
-  }
-
-  public ready(readyFunc: () => void) {
-    if (this.isReady) {
-      readyFunc();
-    } else {
-      this.readyFuncs.push(readyFunc);
-    }
   }
 
   private connected() {
