@@ -1,4 +1,5 @@
 import { PluginHost } from 'plugin-frame';
+import { HostPluginOptions } from '../../../dist';
 
 const apis = {
   test: (a: number) => {
@@ -24,5 +25,8 @@ const url = new URL(`${location.href}remote.html`);
 const code =
   "application.networkRequest('http://api.napster.com/v2.2/artists/top?apikey=YTkxZTRhNzAtODdlNy00ZjMzLTg0MWItOTc0NmZmNjU4Yzk4').then(d => {console.log(d);});";
 
-let host = new PluginHost(code, apis);
+let options: HostPluginOptions = {
+  frameSrc: url,
+};
+let host = new PluginHost(code, apis, options);
 host.ready(async () => {});

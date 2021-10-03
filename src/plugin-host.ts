@@ -9,6 +9,7 @@ export class PluginHost {
   private api: PluginInterface;
   private defaultOptions: HostPluginOptions = {
     container: document.body,
+    sandboxAttributes: ['allow-scripts'],
   };
   private options: HostPluginOptions;
   public child: any = {};
@@ -18,8 +19,14 @@ export class PluginHost {
   constructor(code: string, api: PluginInterface, options?: HostPluginOptions) {
     this.code = code;
     this.api = api;
-    this.options = options || this.defaultOptions;
-    this.remoteOrigin = this.options.frameSrc?.origin || '*';
+    this.options = Object.assign(this.defaultOptions, options);
+    this.remoteOrigin = '*';
+    if (
+      this.options.sandboxAttributes?.includes('allow-same-origin') &&
+      this.options.frameSrc?.origin
+    ) {
+      this.remoteOrigin = this.options.frameSrc?.origin;
+    }
     this.iframe = this.createIframe();
   }
 
@@ -57,7 +64,8 @@ export class PluginHost {
     iframe.frameBorder = '0';
     iframe.width = '0';
     iframe.height = '0';
-    (iframe as any).sandbox = 'allow-scripts allow-same-origin';
+    (iframe as any).sandbox = this.options.sandboxAttributes?.join(' ');
+    console.log(iframe.sandbox.value);
     iframe.onload = this.iframeOnLoad.bind(this);
 
     if (this.options.frameSrc) {

@@ -18,4 +18,5 @@ export interface RemotePluginOptions {
 export interface HostPluginOptions {
   frameSrc?: URL;
   container?: Element;
+  sandboxAttributes?: string[];
 }

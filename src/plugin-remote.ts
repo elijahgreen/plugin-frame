@@ -103,7 +103,7 @@ export class PluginRemote {
       case 'init-eval':
         const scriptTag = document.createElement('script');
         scriptTag.innerHTML = event.data.data;
-        document.getElementById('head')?.appendChild(scriptTag);
+        eval(event.data.data);
         break;
     }
   }
