@@ -19,7 +19,6 @@
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
-  "peerDependencies": {},
   "husky": {
     "hooks": {
       "pre-commit": "tsdx lint"
@@ -41,7 +40,9 @@
     }
   ],
   "devDependencies": {
+    "@jest-runner/electron": "^3.0.1",
     "@size-limit/preset-small-lib": "^5.0.3",
+    "electron": "^15.1.2",
     "husky": "^7.0.2",
     "size-limit": "^5.0.3",
     "tsdx": "^0.14.1",
