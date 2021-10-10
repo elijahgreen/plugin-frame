@@ -89,6 +89,7 @@ export class PluginHost {
   <meta charset="UTF-8">
   <script type="module">
     <INLINE>
+    const pluginRemote = new PluginRemote({});
   </scr` +
       `ipt>
 </head>
