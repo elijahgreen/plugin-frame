@@ -40,10 +40,10 @@
     }
   ],
   "devDependencies": {
-    "@jest-runner/electron": "^3.0.1",
     "@size-limit/preset-small-lib": "^5.0.3",
     "electron": "^15.1.2",
     "husky": "^7.0.2",
+    "jest-electron": "^0.1.11",
     "size-limit": "^5.0.3",
     "tsdx": "^0.14.1",
     "tslib": "^2.3.1",

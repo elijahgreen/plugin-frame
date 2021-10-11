@@ -1,4 +1,4 @@
-import { PluginHost } from '../src/';
+import { PluginHost } from '../dist/index';
 
 describe('PluginHost', () => {
   afterEach(() => {
@@ -26,12 +26,14 @@ describe('PluginHost', () => {
   });
 
   it('should set custom sandbox attributes', () => {
-    new PluginHost(
+    const plugin = new PluginHost(
       '',
       {},
       { sandboxAttributes: ['allow-scripts', 'allow-popups'] }
     );
-    let element = document.querySelectorAll('iframe')[0];
-    expect(element.sandbox.value).toContain('allow-popups');
+    return plugin.ready().then(() => {
+      let element = document.querySelectorAll('iframe')[0];
+      expect(element.sandbox.value).toContain('allow-popups');
+    });
   });
 });

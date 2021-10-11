@@ -80,12 +80,18 @@ export class PluginHost {
   }
 
   private getSrcDoc() {
+    // var exports = {}
+    // is used to fix electron tests
+    // script close tag must be seperated in
+    // order to avoid
     let srcdoc =
       `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
+  <script>var exports = {};</scr` +
+      `ipt>
   <script type="module">
     <INLINE>
     const pluginRemote = new PluginRemote({});
