@@ -29,4 +29,6 @@ let options: HostPluginOptions = {
   frameSrc: url,
 };
 let host = new PluginHost(code, apis, options);
-host.ready(async () => {});
+host.ready().then(() => {
+  host.child.test(5);
+});

@@ -7,15 +7,15 @@ export class PluginHost {
   private remoteOrigin: string;
   private remoteMethods: string[] = [];
   private api: PluginInterface;
+  private readyPromise: Promise<void>;
   private defaultOptions: HostPluginOptions = {
     container: document.body,
     sandboxAttributes: ['allow-scripts'],
   };
   private options: HostPluginOptions;
   public child: any = {};
-  public isReady = false;
-  public readyFuncs: (() => void)[] = [];
   private compiled = '<TEMPLATE>';
+  private resolveReady: any;
   constructor(code: string, api: PluginInterface, options?: HostPluginOptions) {
     this.code = code;
     this.api = api;
@@ -28,14 +28,13 @@ export class PluginHost {
       this.remoteOrigin = this.options.frameSrc?.origin;
     }
     this.iframe = this.createIframe();
+    this.readyPromise = new Promise(resolve => {
+      this.resolveReady = resolve;
+    });
   }
 
-  public ready(readyFunc: () => void) {
-    if (this.isReady) {
-      readyFunc();
-    } else {
-      this.readyFuncs.push(readyFunc);
-    }
+  public ready() {
+    return this.readyPromise;
   }
 
   public methodNameExists(name: string) {
@@ -177,9 +176,6 @@ export class PluginHost {
   }
 
   private connected() {
-    this.isReady = true;
-    this.readyFuncs.forEach(f => {
-      f();
-    });
+    this.resolveReady(undefined);
   }
 }
