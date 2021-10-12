@@ -2,7 +2,6 @@ import { HostPluginOptions, PluginInterface } from './model';
 
 export class PluginHost {
   private port: MessagePort | undefined;
-  private code: string;
   private iframe: HTMLIFrameElement;
   private remoteOrigin: string;
   private remoteMethods: string[] = [];
@@ -16,8 +15,7 @@ export class PluginHost {
   public child: any = {};
   private compiled = '<TEMPLATE>';
   private resolveReady: any;
-  constructor(code: string, api: PluginInterface, options?: HostPluginOptions) {
-    this.code = code;
+  constructor(api: PluginInterface, options?: HostPluginOptions) {
     this.api = api;
     this.options = Object.assign(this.defaultOptions, options);
     this.remoteOrigin = '*';
@@ -50,6 +48,21 @@ export class PluginHost {
       };
 
       this.port?.postMessage({ type: 'exists', name: name }, [channel.port2]);
+    });
+  }
+
+  public executeCode(code: string) {
+    return new Promise<void>((resolve, reject) => {
+      const channel = new MessageChannel();
+      channel.port1.onmessage = (event: MessageEvent) => {
+        channel.port1.close();
+        if (event.data.error) {
+          reject(event.data.error);
+        } else {
+          resolve(undefined);
+        }
+      };
+      this.port?.postMessage({ type: 'runcode', code: code }, [channel.port2]);
     });
   }
 
@@ -126,6 +139,10 @@ export class PluginHost {
           event.ports[0].postMessage({ error: e });
         }
         break;
+      case 'runcode-response':
+        if (!event.data.error) {
+        }
+        break;
     }
   }
 
@@ -144,10 +161,6 @@ export class PluginHost {
       { type: 'init', api: names },
       this.remoteOrigin,
       [channel.port2]
-    );
-    this.iframe.contentWindow?.postMessage(
-      { type: 'init-eval', data: this.code },
-      this.remoteOrigin
     );
   }
 

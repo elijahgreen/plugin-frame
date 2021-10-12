@@ -28,7 +28,8 @@ const code =
 let options: HostPluginOptions = {
   frameSrc: url,
 };
-let host = new PluginHost(code, apis, options);
-host.ready().then(() => {
-  host.child.test(5);
+let host = new PluginHost(apis, options);
+host.ready().then(async () => {
+  await host.executeCode(code);
+  await host.child.test(5);
 });

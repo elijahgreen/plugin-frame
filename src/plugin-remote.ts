@@ -41,6 +41,14 @@ export class PluginRemote {
           event.ports[0].postMessage({ error: e });
         }
         break;
+      case 'runcode':
+        try {
+          eval(event.data.code);
+          event.ports[0].postMessage({ result: 'success' });
+        } catch (e) {
+          event.ports[0].postMessage({ type: 'runcode-response', error: e });
+        }
+        break;
     }
   }
 
@@ -99,11 +107,6 @@ export class PluginRemote {
         this.hostMethods = event.data.api;
         this.initializeApi();
         this.createFunctions();
-        break;
-      case 'init-eval':
-        const scriptTag = document.createElement('script');
-        scriptTag.innerHTML = event.data.data;
-        eval(event.data.data);
         break;
     }
   }
