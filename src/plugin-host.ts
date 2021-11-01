@@ -1,10 +1,9 @@
+import { Connection } from './connection';
 import { HostPluginOptions, PluginInterface } from './model';
 
 export class PluginHost {
-  private port: MessagePort | undefined;
   private iframe: HTMLIFrameElement;
   private remoteOrigin: string;
-  private remoteMethods: string[] = [];
   private api: PluginInterface;
   private readyPromise: Promise<void>;
   private defaultOptions: HostPluginOptions = {
@@ -15,6 +14,7 @@ export class PluginHost {
   public child: any = {};
   private compiled = '<TEMPLATE>';
   private resolveReady: any;
+  private connection: Connection | undefined;
   constructor(api: PluginInterface, options?: HostPluginOptions) {
     this.api = api;
     this.options = Object.assign(this.defaultOptions, options);
@@ -35,40 +35,13 @@ export class PluginHost {
     return this.readyPromise;
   }
 
-  public methodNameExists(name: string) {
-    return new Promise<boolean>((res, rej) => {
-      const channel = new MessageChannel();
-      channel.port1.onmessage = ({ data }) => {
-        channel.port1.close();
-        if (data.error) {
-          rej(data.error);
-        } else {
-          res(data.result);
-        }
-      };
-
-      this.port?.postMessage({ type: 'exists', name: name }, [channel.port2]);
-    });
-  }
-
   public executeCode(code: string) {
-    return new Promise<void>((resolve, reject) => {
-      const channel = new MessageChannel();
-      channel.port1.onmessage = (event: MessageEvent) => {
-        channel.port1.close();
-        if (event.data.error) {
-          reject(event.data.error);
-        } else {
-          resolve(undefined);
-        }
-      };
-      this.port?.postMessage({ type: 'runcode', code: code }, [channel.port2]);
-    });
+    return this.connection?.callServiceMethod('runCode', code);
   }
 
   public destroy() {
     this.iframe.remove();
-    this.port?.close();
+    this.connection?.close();
   }
 
   private createIframe() {
@@ -77,7 +50,6 @@ export class PluginHost {
     iframe.width = '0';
     iframe.height = '0';
     (iframe as any).sandbox = this.options.sandboxAttributes?.join(' ');
-    console.log(iframe.sandbox.value);
     iframe.onload = this.iframeOnLoad.bind(this);
 
     if (this.options.frameSrc) {
@@ -96,7 +68,7 @@ export class PluginHost {
     // var exports = {}
     // is used to fix electron tests
     // script close tag must be seperated in
-    // order to avoid
+    // order to avoid parser error
     let srcdoc =
       `
 <!DOCTYPE html>
@@ -120,81 +92,21 @@ export class PluginHost {
     return srcdoc;
   }
 
-  private async portOnMessage(event: MessageEvent) {
-    switch (event.data.type) {
-      case 'events':
-        this.remoteMethods = event.data.api;
-        this.createFunctions();
-        this.connected();
-        break;
-      case 'method':
-        try {
-          const name = event.data.name;
-          const method = this.api[name];
-          const args = event.data.args;
-          const result = await method.apply(null, args);
-          event.ports[0].postMessage({ result: result });
-        } catch (e) {
-          console.log(e);
-          event.ports[0].postMessage({ error: e });
-        }
-        break;
-      case 'runcode-response':
-        if (!event.data.error) {
-        }
-        break;
-    }
-  }
-
   private iframeOnLoad() {
     const channel = new MessageChannel();
-    this.port = channel.port1;
-    this.port.onmessage = this.portOnMessage.bind(this);
-
-    const names = [];
-    for (let name in this.api) {
-      if (this.api.hasOwnProperty(name)) {
-        names.push(name);
-      }
-    }
     this.iframe.contentWindow?.postMessage(
-      { type: 'init', api: names },
+      { type: 'init' },
       this.remoteOrigin,
       [channel.port2]
     );
-  }
-
-  private generateFunction(name: string) {
-    const newFunc = (...args: any[]) =>
-      new Promise((res, rej) => {
-        const channel = new MessageChannel();
-        channel.port1.onmessage = ({ data }) => {
-          channel.port1.close();
-          if (data.error) {
-            rej(data.error);
-          } else {
-            res(data.result);
-          }
-        };
-        this.port?.postMessage(
-          {
-            type: 'method',
-            name: name,
-            args: args,
-          },
-          [channel.port2]
-        );
-      });
-    return newFunc;
-  }
-
-  private createFunctions() {
-    this.remoteMethods.forEach(name => {
-      this.child[name] = this.generateFunction(name);
+    this.connection = new Connection(channel.port1, {});
+    this.connection.setServiceMethods({
+      connected: this.connected.bind(this),
     });
   }
 
   private connected() {
+    this.connection?.setLocalMethods(this.api);
     this.resolveReady(undefined);
   }
 }

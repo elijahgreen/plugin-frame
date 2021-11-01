@@ -13,6 +13,7 @@ export interface CompletePluginInterface {
 export interface RemotePluginOptions {
   prepareFuncs?: PreparePluginInterface;
   completeFuncs?: CompletePluginInterface;
+  pluginObject?: PluginInterface;
 }
 
 export interface HostPluginOptions {
