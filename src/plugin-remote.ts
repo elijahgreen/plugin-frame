@@ -33,6 +33,11 @@ export class PluginRemote {
   }
 
   private runCode(code: string) {
-    eval(code);
+    //eval(code);
+    const scriptTag = document.createElement('script');
+    scriptTag.innerHTML = code;
+    document.getElementsByTagName('body')[0].appendChild(scriptTag);
   }
 }
+
+(window as any).application = application;
