@@ -99,7 +99,9 @@ export class PluginHost {
       this.remoteOrigin,
       [channel.port2]
     );
-    this.connection = new Connection(channel.port1, {});
+    this.connection = new Connection(channel.port1, {
+      pluginObject: this.child,
+    });
     this.connection.setServiceMethods({
       connected: this.connected.bind(this),
     });
