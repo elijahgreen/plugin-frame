@@ -31,5 +31,5 @@ let options: HostPluginOptions = {
 let host = new PluginHost(apis, options);
 host.ready().then(async () => {
   await host.executeCode(code);
-  await host.child.test(5);
+  await host.connection.remote.test(5);
 });

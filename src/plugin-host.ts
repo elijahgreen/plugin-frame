@@ -11,10 +11,9 @@ export class PluginHost {
     sandboxAttributes: ['allow-scripts'],
   };
   private options: HostPluginOptions;
-  public child: any = {};
   private compiled = '<TEMPLATE>';
   private resolveReady: any;
-  private connection: Connection | undefined;
+  public connection: Connection | undefined;
   constructor(api: PluginInterface, options?: HostPluginOptions) {
     this.api = api;
     this.options = Object.assign(this.defaultOptions, options);
@@ -99,9 +98,7 @@ export class PluginHost {
       this.remoteOrigin,
       [channel.port2]
     );
-    this.connection = new Connection(channel.port1, {
-      pluginObject: this.child,
-    });
+    this.connection = new Connection(channel.port1);
     this.connection.setServiceMethods({
       connected: this.connected.bind(this),
     });

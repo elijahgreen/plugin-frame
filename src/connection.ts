@@ -10,7 +10,7 @@ enum MessageType {
 
 export class Connection {
   private port: MessagePort;
-  private remote: PluginInterface = {};
+  public remote: PluginInterface = {};
   private api: PluginInterface = {};
   private options: RemotePluginOptions = {};
   private serviceMethods: PluginInterface = {};
