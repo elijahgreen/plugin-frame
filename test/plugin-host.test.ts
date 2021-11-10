@@ -46,4 +46,25 @@ describe('PluginHost', () => {
         expect(calledMethod.mock.calls.length).toBe(1);
       });
   });
+
+  it('should call remote api', () => {
+    const calledMethod = jest.fn().mockImplementation(a => a + 2);
+    const api = {
+      methodCall: calledMethod,
+    };
+    const plugin = new PluginHost(api);
+    return plugin
+      .ready()
+      .then(() => {
+        return plugin.executeCode(`pluginRemote.connection.setLocalMethods({
+          dynamicMethod: function(num) {
+            return application.methodCall(num);
+          }
+        });`);
+      })
+      .then(() => plugin.connection?.remote.dynamicMethod(5))
+      .then(() => {
+        expect(calledMethod.mock.calls.length).toBe(1);
+      });
+  });
 });

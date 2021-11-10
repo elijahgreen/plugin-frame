@@ -79,6 +79,7 @@ export class PluginHost {
   <script type="module">
     <INLINE>
     const pluginRemote = new PluginRemote({});
+    window.pluginRemote = pluginRemote;
   </scr` +
       `ipt>
 </head>
