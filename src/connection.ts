@@ -18,6 +18,18 @@ export class Connection {
     this.port = port;
     this.options = Object.assign({}, options);
     this.port.onmessage = this.portOnMessage;
+    this.remote = new Proxy(this.remote, {
+      get: (_target, prop: any) => {
+        return this.generateFunction(prop);
+      },
+      set: (_target, prop: any, value) => {
+        this.api[prop] = value;
+        return true;
+      },
+    });
+    if (this.options.pluginObject) {
+      Object.setPrototypeOf(this.options.pluginObject, this.remote);
+    }
   }
 
   public setServiceMethods(api: PluginInterface) {
@@ -77,7 +89,6 @@ export class Connection {
       case MessageType.SetMethods:
         const methodNames = event.data.api;
         console.log(methodNames);
-        this.generateMethods(methodNames);
         break;
       case MessageType.ServiceMethod:
         try {
@@ -102,16 +113,6 @@ export class Connection {
       },
       {}
     );
-  }
-
-  private generateMethods(methodNames: string[]) {
-    methodNames.forEach(name => {
-      this.remote[name] = this.generateFunction(name);
-    });
-    if (this.options.pluginObject) {
-      Object.assign(this.options.pluginObject, this.remote);
-      this.options.pluginObject = this.remote;
-    }
   }
 
   private generateFunction(name: string) {

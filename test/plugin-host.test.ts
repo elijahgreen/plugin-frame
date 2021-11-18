@@ -47,7 +47,7 @@ describe('PluginHost', () => {
       });
   });
 
-  it('should call remote api', () => {
+  it('should call remote api after setting methods', () => {
     const calledMethod = jest.fn().mockImplementation(a => a + 2);
     const api = {
       methodCall: calledMethod,
@@ -61,6 +61,27 @@ describe('PluginHost', () => {
             return application.methodCall(num);
           }
         });`);
+      })
+      .then(() => plugin.connection?.remote.dynamicMethod(5))
+      .then(() => {
+        expect(calledMethod.mock.calls.length).toBe(1);
+      });
+  });
+
+  it('should call remote api that is dynamically added to undefined method', () => {
+    const calledMethod = jest.fn().mockImplementation(a => a + 2);
+    const api = {
+      methodCall: calledMethod,
+    };
+    const plugin = new PluginHost(api);
+    return plugin
+      .ready()
+      .then(() => {
+        return plugin.executeCode(`
+          application.dynamicMethod = function(num) {
+            return application.methodCall(num);
+          }
+        `);
       })
       .then(() => plugin.connection?.remote.dynamicMethod(5))
       .then(() => {
