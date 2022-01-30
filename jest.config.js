@@ -1,4 +1,4 @@
 module.exports = {
-  runner: 'jest-electron/runner',
-  testEnvironment: 'jest-electron/environment',
+  runner: '@kayahr/jest-electron-runner',
+  testEnvironment: '@kayahr/jest-electron-runner/environment',
 };
