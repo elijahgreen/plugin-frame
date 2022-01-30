@@ -3,7 +3,7 @@ import { PluginHost } from '../dist/index';
 describe('PluginHost', () => {
   afterEach(() => {
     let frames = document.querySelectorAll('iframe');
-    frames.forEach(frame => {
+    frames.forEach((frame) => {
       frame.remove();
     });
   });
@@ -32,7 +32,7 @@ describe('PluginHost', () => {
   });
 
   it('should call local api', () => {
-    const calledMethod = jest.fn().mockImplementation(a => a + 2);
+    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };
@@ -48,7 +48,7 @@ describe('PluginHost', () => {
   });
 
   it('should call remote api after setting methods', () => {
-    const calledMethod = jest.fn().mockImplementation(a => a + 2);
+    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };
@@ -69,7 +69,7 @@ describe('PluginHost', () => {
   });
 
   it('should call remote api that is dynamically added to undefined method', () => {
-    const calledMethod = jest.fn().mockImplementation(a => a + 2);
+    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };

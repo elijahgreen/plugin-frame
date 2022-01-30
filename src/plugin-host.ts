@@ -25,7 +25,7 @@ export class PluginHost {
       this.remoteOrigin = this.options.frameSrc?.origin;
     }
     this.iframe = this.createIframe();
-    this.readyPromise = new Promise(resolve => {
+    this.readyPromise = new Promise((resolve) => {
       this.resolveReady = resolve;
     });
   }
