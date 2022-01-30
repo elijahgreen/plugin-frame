@@ -1,12 +1,13 @@
 import { RemotePluginOptions } from '.';
 import { PluginInterface } from './model';
 
-enum MessageType {
-  Method = 'method',
-  Exists = 'exists',
-  SetMethods = 'set-methods',
-  ServiceMethod = 'service-method',
-}
+const MessageType = {
+  Method: 'method',
+  Exists: 'exists',
+  SetMethods: 'set-methods',
+  ServiceMethod: 'service-method',
+} as const;
+export type MessageType = typeof MessageType[keyof typeof MessageType];
 
 export class Connection {
   private port: MessagePort;
