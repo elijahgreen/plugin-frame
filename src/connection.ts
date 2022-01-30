@@ -44,25 +44,20 @@ export class Connection {
   }
 
   public callServiceMethod(methodName: string, ...args: any[]) {
-    return new Promise((resolve, reject) => {
-      const { port1, port2 } = new MessageChannel();
-      port1.onmessage = (event: MessageEvent) => {
-        const data = event.data;
-        port1.close();
-        if (data.error) {
-          reject(data.error);
-        } else {
-          resolve(data.result);
-        }
-      };
-      this.port.postMessage(
-        { type: MessageType.ServiceMethod, name: methodName, args: args },
-        [port2]
-      );
-    });
+    const message = {
+      type: MessageType.ServiceMethod,
+      name: methodName,
+      args: args,
+    };
+    return this.sendMessage(message);
   }
 
   public methodDefined(methodName: string): Promise<boolean> {
+    const message = { type: MessageType.MethodDefined, name: methodName };
+    return this.sendMessage(message);
+  }
+
+  private sendMessage<T>(message: any): Promise<T> {
     return new Promise((resolve, reject) => {
       const { port1, port2 } = new MessageChannel();
       port1.onmessage = (event: MessageEvent) => {
@@ -74,10 +69,7 @@ export class Connection {
           resolve(data.result);
         }
       };
-      this.port.postMessage(
-        { type: MessageType.MethodDefined, name: methodName },
-        [port2]
-      );
+      this.port.postMessage(message, [port2]);
     });
   }
 
