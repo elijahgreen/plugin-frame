@@ -88,4 +88,39 @@ describe('PluginHost', () => {
         expect(calledMethod.mock.calls.length).toBe(1);
       });
   });
+
+  it('should detect if remote has an undefined method', () => {
+    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const api = {
+      methodCall: calledMethod,
+    };
+    const plugin = new PluginHost(api);
+    return plugin
+      .ready()
+      .then(() => plugin.connection?.methodDefined('dynamicMethod'))
+      .then((exists) => {
+        expect(exists).toBe(false);
+      });
+  });
+
+  it('should call remote api that is dynamically added to undefined method', () => {
+    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const api = {
+      methodCall: calledMethod,
+    };
+    const plugin = new PluginHost(api);
+    return plugin
+      .ready()
+      .then(() => {
+        return plugin.executeCode(`
+          application.dynamicMethod = function(num) {
+            return application.methodCall(num);
+          }
+        `);
+      })
+      .then(() => plugin.connection?.methodDefined('dynamicMethod'))
+      .then((exists) => {
+        expect(exists).toBe(true);
+      });
+  });
 });

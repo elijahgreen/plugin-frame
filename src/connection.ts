@@ -3,7 +3,7 @@ import { PluginInterface } from './model';
 
 const MessageType = {
   Method: 'method',
-  Exists: 'exists',
+  MethodDefined: 'method-defined',
   SetMethods: 'set-methods',
   ServiceMethod: 'service-method',
 } as const;
@@ -52,11 +52,30 @@ export class Connection {
         if (data.error) {
           reject(data.error);
         } else {
-          resolve(data.response);
+          resolve(data.result);
         }
       };
       this.port.postMessage(
         { type: MessageType.ServiceMethod, name: methodName, args: args },
+        [port2]
+      );
+    });
+  }
+
+  public methodDefined(methodName: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const { port1, port2 } = new MessageChannel();
+      port1.onmessage = (event: MessageEvent) => {
+        const data = event.data;
+        port1.close();
+        if (data.error) {
+          reject(data.error);
+        } else {
+          resolve(data.result);
+        }
+      };
+      this.port.postMessage(
+        { type: MessageType.MethodDefined, name: methodName },
         [port2]
       );
     });
@@ -79,9 +98,9 @@ export class Connection {
           event.ports[0].postMessage({ error: this.serializeError(e) });
         }
         break;
-      case MessageType.Exists:
+      case MessageType.MethodDefined:
         try {
-          const exists = !!this.remote[event.data.name];
+          const exists = !!this.api[event.data.name];
           event.ports[0].postMessage({ result: exists });
         } catch (e) {
           event.ports[0].postMessage({ error: this.serializeError(e) });
