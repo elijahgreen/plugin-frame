@@ -9,6 +9,7 @@ export class PluginHost<T extends { [K in keyof T]: Function } = any> {
   private defaultOptions: HostPluginOptions = {
     container: document.body,
     sandboxAttributes: ['allow-scripts'],
+    remoteObjectName: 'application',
   };
   private options: HostPluginOptions;
   private compiled = '<TEMPLATE>';
@@ -78,8 +79,10 @@ export class PluginHost<T extends { [K in keyof T]: Function } = any> {
       `ipt>
   <script type="module">
     <INLINE>
-    const pluginRemote = new PluginRemote({});
+    let ${this.options.remoteObjectName} = {};
+    const pluginRemote = new PluginRemote({}, {pluginObject: ${this.options.remoteObjectName}});
     window.pluginRemote = pluginRemote;
+    window.${this.options.remoteObjectName} = ${this.options.remoteObjectName};
   </scr` +
       `ipt>
 </head>

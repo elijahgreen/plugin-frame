@@ -47,6 +47,22 @@ describe('PluginHost', () => {
       });
   });
 
+  it('should call local api with user supplied remote object name', () => {
+    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const api = {
+      methodCall: calledMethod,
+    };
+    const plugin = new PluginHost(api, { remoteObjectName: 'frame' });
+    return plugin
+      .ready()
+      .then(() => {
+        return plugin.executeCode('frame.methodCall(1)');
+      })
+      .then(() => {
+        expect(calledMethod.mock.calls.length).toBe(1);
+      });
+  });
+
   it('should call remote api after setting methods', () => {
     const calledMethod = jest.fn().mockImplementation((a) => a + 2);
     const api = {

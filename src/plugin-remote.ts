@@ -11,6 +11,10 @@ export class PluginRemote {
   constructor(api: PluginInterface, options?: RemotePluginOptions) {
     window.addEventListener('message', this.initPort.bind(this));
     this.options = Object.assign({}, options);
+    if (!this.options.pluginObject) {
+      this.options.pluginObject = application;
+      (window as any).application = application;
+    }
     this.api = api;
   }
 
@@ -20,7 +24,6 @@ export class PluginRemote {
         this.port = event.ports[0];
         this.connection = new Connection(this.port, {
           ...this.options,
-          pluginObject: application,
         });
         this.connection.setServiceMethods({
           runCode: this.runCode,
@@ -37,5 +40,3 @@ export class PluginRemote {
     document.getElementsByTagName('body')[0].appendChild(scriptTag);
   }
 }
-
-(window as any).application = application;
