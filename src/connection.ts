@@ -4,14 +4,13 @@ import { PluginInterface } from './model';
 const MessageType = {
   Method: 'method',
   MethodDefined: 'method-defined',
-  SetMethods: 'set-methods',
   ServiceMethod: 'service-method',
 } as const;
 export type MessageType = typeof MessageType[keyof typeof MessageType];
 
 export class Connection<T extends { [K in keyof T]: Function } = any> {
-  private port: MessagePort;
   public remote: T;
+  private port: MessagePort;
   private api: PluginInterface = {};
   private options: RemotePluginOptions = {};
   private serviceMethods: PluginInterface = {};
@@ -38,8 +37,6 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
   }
 
   public setLocalMethods(api: PluginInterface) {
-    let names = Object.keys(api);
-    this.port.postMessage({ type: MessageType.SetMethods, api: names });
     this.api = api;
   }
 
@@ -57,6 +54,10 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
     return this.sendMessage(message);
   }
 
+  public close() {
+    this.port.close();
+  }
+
   private sendMessage<T>(message: any): Promise<T> {
     return new Promise((resolve, reject) => {
       const { port1, port2 } = new MessageChannel();
@@ -71,10 +72,6 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
       };
       this.port.postMessage(message, [port2]);
     });
-  }
-
-  public close() {
-    this.port.close();
   }
 
   private portOnMessage = async (event: MessageEvent) => {
@@ -97,10 +94,6 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
         } catch (e) {
           event.ports[0].postMessage({ error: this.serializeError(e) });
         }
-        break;
-      case MessageType.SetMethods:
-        const methodNames = event.data.api;
-        console.log(methodNames);
         break;
       case MessageType.ServiceMethod:
         try {

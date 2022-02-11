@@ -25,7 +25,6 @@ export class PluginRemote {
         this.connection.setServiceMethods({
           runCode: this.runCode,
         });
-        console.log(this.api);
         this.connection.setLocalMethods(this.api);
         await this.connection.callServiceMethod('connected');
         break;
