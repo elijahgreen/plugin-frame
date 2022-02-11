@@ -79,10 +79,10 @@ export class PluginHost<T extends { [K in keyof T]: Function } = any> {
       `ipt>
   <script type="module">
     <INLINE>
-    let ${this.options.remoteObjectName} = {};
-    const pluginRemote = new PluginRemote({}, {pluginObject: ${this.options.remoteObjectName}});
+    let remoteObject = {};
+    const pluginRemote = new PluginRemote({}, {pluginObject: remoteObject});
     window.pluginRemote = pluginRemote;
-    window.${this.options.remoteObjectName} = ${this.options.remoteObjectName};
+    window.${this.options.remoteObjectName} = remoteObject;
   </scr` +
       `ipt>
 </head>
