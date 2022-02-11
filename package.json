@@ -16,8 +16,7 @@
     "test": "dts test",
     "lint": "dts lint",
     "prepare": "dts build",
-    "size": "size-limit",
-    "analyze": "size-limit --why"
+    "size": "size-limit"
   },
   "husky": {
     "hooks": {
@@ -42,6 +41,7 @@
   ],
   "devDependencies": {
     "@kayahr/jest-electron-runner": "^4.1.0",
+    "@tsconfig/recommended": "^1.0.1",
     "@size-limit/preset-small-lib": "^7.0.5",
     "dts-cli": "^1.2.0",
     "electron": "^16.0.6",
