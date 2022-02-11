@@ -52,7 +52,9 @@ describe('PluginHost', () => {
     const api = {
       methodCall: calledMethod,
     };
-    const plugin = new PluginHost(api);
+    const plugin = new PluginHost<{
+      dynamicMethod: (num: number) => Promise<number>;
+    }>(api);
     return plugin
       .ready()
       .then(() => {
@@ -73,7 +75,10 @@ describe('PluginHost', () => {
     const api = {
       methodCall: calledMethod,
     };
-    const plugin = new PluginHost(api);
+
+    const plugin = new PluginHost<{
+      dynamicMethod: (num: number) => Promise<number>;
+    }>(api);
     return plugin
       .ready()
       .then(() => {

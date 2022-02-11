@@ -1,7 +1,7 @@
 import { Connection } from './connection';
 import { HostPluginOptions, PluginInterface } from './model';
 
-export class PluginHost {
+export class PluginHost<T extends { [K in keyof T]: Function } = any> {
   private iframe: HTMLIFrameElement;
   private remoteOrigin: string;
   private api: PluginInterface;
@@ -13,7 +13,7 @@ export class PluginHost {
   private options: HostPluginOptions;
   private compiled = '<TEMPLATE>';
   private resolveReady: any;
-  public connection: Connection | undefined;
+  public connection: Connection<T> | undefined;
   constructor(api: PluginInterface, options?: HostPluginOptions) {
     this.api = api;
     this.options = Object.assign(this.defaultOptions, options);
@@ -99,7 +99,7 @@ export class PluginHost {
       this.remoteOrigin,
       [channel.port2]
     );
-    this.connection = new Connection(channel.port1);
+    this.connection = new Connection<T>(channel.port1);
     this.connection.setServiceMethods({
       connected: this.connected.bind(this),
     });

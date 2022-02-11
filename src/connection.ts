@@ -9,9 +9,9 @@ const MessageType = {
 } as const;
 export type MessageType = typeof MessageType[keyof typeof MessageType];
 
-export class Connection {
+export class Connection<T extends { [K in keyof T]: Function } = any> {
   private port: MessagePort;
-  public remote: PluginInterface = {};
+  public remote: T;
   private api: PluginInterface = {};
   private options: RemotePluginOptions = {};
   private serviceMethods: PluginInterface = {};
@@ -19,7 +19,7 @@ export class Connection {
     this.port = port;
     this.options = Object.assign({}, options);
     this.port.onmessage = this.portOnMessage;
-    this.remote = new Proxy(this.remote, {
+    this.remote = new Proxy<T>({} as any, {
       get: (_target, prop: any) => {
         return this.generateFunction(prop);
       },

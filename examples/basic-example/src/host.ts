@@ -28,8 +28,12 @@ const code =
 let options: HostPluginOptions = {
   frameSrc: url,
 };
-let host = new PluginHost(apis, options);
+interface RemoteInterface {
+  test: (num: number) => Promise<number>;
+}
+let host = new PluginHost<RemoteInterface>(apis, options);
 host.ready().then(async () => {
   await host.executeCode(code);
-  await host.connection.remote.test(5);
+  const result = await host.connection.remote.test(5);
+  console.log(result);
 });
