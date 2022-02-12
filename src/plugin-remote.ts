@@ -2,11 +2,11 @@ import { Connection } from './connection';
 import { PluginInterface, RemotePluginOptions } from './model';
 
 let application: any = {};
-export class PluginRemote {
+export class PluginRemote<T extends { [K in keyof T]: Function } = any> {
   private port: MessagePort | undefined;
   private api: PluginInterface;
   private options: RemotePluginOptions = {};
-  public connection: Connection | undefined;
+  public connection: Connection<T> | undefined;
 
   constructor(api: PluginInterface, options?: RemotePluginOptions) {
     window.addEventListener('message', this.initPort.bind(this));
@@ -22,7 +22,7 @@ export class PluginRemote {
     switch (event.data.type) {
       case 'init':
         this.port = event.ports[0];
-        this.connection = new Connection(this.port, {
+        this.connection = new Connection<T>(this.port, {
           ...this.options,
         });
         this.connection.setServiceMethods({
