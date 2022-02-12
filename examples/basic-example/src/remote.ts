@@ -12,7 +12,6 @@ const apis = {
     console.log("Let's go remote ", a);
     return 6;
   },
-  onTest: undefined,
 };
 
 const prepare = {

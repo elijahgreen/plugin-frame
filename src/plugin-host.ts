@@ -1,30 +1,31 @@
 import { Connection } from './connection';
 import { HostPluginOptions, PluginInterface } from './model';
 
-export class PluginHost<T extends { [K in keyof T]: Function } = any> {
+export class PluginHost<
+  T extends { [K in keyof T]: Function } = any
+> extends Connection<T> {
   private iframe: HTMLIFrameElement;
   private remoteOrigin: string;
-  private api: PluginInterface;
   private readyPromise: Promise<void>;
   private defaultOptions: HostPluginOptions = {
     container: document.body,
     sandboxAttributes: ['allow-scripts'],
     remoteObjectName: 'application',
   };
-  private options: HostPluginOptions;
+  private hostOptions: HostPluginOptions;
   private compiled = '<TEMPLATE>';
   private resolveReady: any;
-  public connection: Connection<T> | undefined;
   constructor(api: PluginInterface, options?: HostPluginOptions) {
-    this.api = api;
-    this.options = Object.assign(this.defaultOptions, options);
+    super();
+    this.hostOptions = Object.assign(this.defaultOptions, options);
     this.remoteOrigin = '*';
     if (
-      this.options.sandboxAttributes?.includes('allow-same-origin') &&
-      this.options.frameSrc?.origin
+      this.hostOptions.sandboxAttributes?.includes('allow-same-origin') &&
+      this.hostOptions.frameSrc?.origin
     ) {
-      this.remoteOrigin = this.options.frameSrc?.origin;
+      this.remoteOrigin = this.hostOptions.frameSrc?.origin;
     }
+    this.setLocalMethods(api);
     this.iframe = this.createIframe();
     this.readyPromise = new Promise((resolve) => {
       this.resolveReady = resolve;
@@ -36,12 +37,12 @@ export class PluginHost<T extends { [K in keyof T]: Function } = any> {
   }
 
   public executeCode(code: string) {
-    return this.connection?.callServiceMethod('runCode', code);
+    return this.callServiceMethod('runCode', code);
   }
 
   public destroy() {
     this.iframe.remove();
-    this.connection?.close();
+    this.close();
   }
 
   private createIframe() {
@@ -49,18 +50,18 @@ export class PluginHost<T extends { [K in keyof T]: Function } = any> {
     iframe.frameBorder = '0';
     iframe.width = '0';
     iframe.height = '0';
-    (iframe as any).sandbox = this.options.sandboxAttributes?.join(' ');
+    (iframe as any).sandbox = this.hostOptions.sandboxAttributes?.join(' ');
     iframe.onload = this.iframeOnLoad.bind(this);
 
-    if (this.options.frameSrc) {
-      iframe.src = this.options.frameSrc.href;
-      this.options.container?.append(iframe);
+    if (this.hostOptions.frameSrc) {
+      iframe.src = this.hostOptions.frameSrc.href;
+      this.hostOptions.container?.append(iframe);
       return iframe;
     }
 
     const srcdoc = this.getSrcDoc();
     iframe.setAttribute('srcdoc', srcdoc);
-    this.options.container?.append(iframe);
+    this.hostOptions.container?.append(iframe);
     return iframe;
   }
 
@@ -82,7 +83,7 @@ export class PluginHost<T extends { [K in keyof T]: Function } = any> {
     let remoteObject = {};
     const pluginRemote = new PluginRemote({}, {pluginObject: remoteObject});
     window.pluginRemote = pluginRemote;
-    window.${this.options.remoteObjectName} = remoteObject;
+    window.${this.hostOptions.remoteObjectName} = remoteObject;
   </scr` +
       `ipt>
 </head>
@@ -102,14 +103,13 @@ export class PluginHost<T extends { [K in keyof T]: Function } = any> {
       this.remoteOrigin,
       [channel.port2]
     );
-    this.connection = new Connection<T>(channel.port1);
-    this.connection.setServiceMethods({
+    this.setPort(channel.port1);
+    this.setServiceMethods({
       connected: this.connected.bind(this),
     });
   }
 
   private connected() {
-    this.connection?.setLocalMethods(this.api);
     this.resolveReady(undefined);
   }
 }

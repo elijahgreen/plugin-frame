@@ -1,5 +1,4 @@
-import { RemotePluginOptions } from './model';
-import { PluginInterface } from './model';
+import { RemotePluginOptions, PluginInterface } from './model';
 
 const MessageType = {
   Method: 'method',
@@ -10,14 +9,11 @@ export type MessageType = typeof MessageType[keyof typeof MessageType];
 
 export class Connection<T extends { [K in keyof T]: Function } = any> {
   public remote: T;
-  private port: MessagePort;
+  private port: MessagePort | undefined;
   private api: PluginInterface = {};
   private options: RemotePluginOptions = {};
   private serviceMethods: PluginInterface = {};
-  constructor(port: MessagePort, options?: RemotePluginOptions) {
-    this.port = port;
-    this.options = Object.assign({}, options);
-    this.port.onmessage = this.portOnMessage;
+  constructor() {
     this.remote = new Proxy<T>({} as any, {
       get: (_target, prop: any) => {
         return this.generateFunction(prop);
@@ -27,20 +23,22 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
         return true;
       },
     });
-    if (this.options.pluginObject) {
-      Object.setPrototypeOf(this.options.pluginObject, this.remote);
-    }
-  }
-
-  public setServiceMethods(api: PluginInterface) {
-    this.serviceMethods = api;
   }
 
   public setLocalMethods(api: PluginInterface) {
     this.api = api;
   }
 
-  public callServiceMethod(methodName: string, ...args: any[]) {
+  public methodDefined(methodName: string): Promise<boolean> {
+    const message = { type: MessageType.MethodDefined, name: methodName };
+    return this.sendMessage(message);
+  }
+
+  protected setServiceMethods(api: PluginInterface) {
+    this.serviceMethods = api;
+  }
+
+  protected callServiceMethod(methodName: string, ...args: any[]) {
     const message = {
       type: MessageType.ServiceMethod,
       name: methodName,
@@ -49,13 +47,20 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
     return this.sendMessage(message);
   }
 
-  public methodDefined(methodName: string): Promise<boolean> {
-    const message = { type: MessageType.MethodDefined, name: methodName };
-    return this.sendMessage(message);
+  protected close() {
+    this.port?.close();
   }
 
-  public close() {
-    this.port.close();
+  protected setPort(port: MessagePort) {
+    this.port = port;
+    this.port.onmessage = this.portOnMessage;
+  }
+
+  protected setOptions(options?: RemotePluginOptions) {
+    this.options = Object.assign({}, options);
+    if (this.options.pluginObject) {
+      Object.setPrototypeOf(this.options.pluginObject, this.remote);
+    }
   }
 
   private sendMessage<U>(message: any): Promise<U> {
@@ -70,7 +75,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
           resolve(data.result);
         }
       };
-      this.port.postMessage(message, [port2]);
+      this.port?.postMessage(message, [port2]);
     });
   }
 
@@ -142,7 +147,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
         if (this.options.prepareFuncs && this.options.prepareFuncs[name]) {
           args = this.options.prepareFuncs[name](args);
         }
-        this.port.postMessage(
+        this.port?.postMessage(
           {
             type: MessageType.Method,
             name: name,

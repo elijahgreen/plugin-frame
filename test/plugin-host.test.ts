@@ -74,13 +74,13 @@ describe('PluginHost', () => {
     return plugin
       .ready()
       .then(() => {
-        return plugin.executeCode(`pluginRemote.connection.setLocalMethods({
+        return plugin.executeCode(`pluginRemote.setLocalMethods({
           dynamicMethod: function(num) {
             return application.methodCall(num);
           }
         });`);
       })
-      .then(() => plugin.connection?.remote.dynamicMethod(5))
+      .then(() => plugin.remote.dynamicMethod(5))
       .then(() => {
         expect(calledMethod.mock.calls.length).toBe(1);
       });
@@ -104,7 +104,7 @@ describe('PluginHost', () => {
           }
         `);
       })
-      .then(() => plugin.connection?.remote.dynamicMethod(5))
+      .then(() => plugin.remote.dynamicMethod(5))
       .then(() => {
         expect(calledMethod.mock.calls.length).toBe(1);
       });
@@ -118,7 +118,7 @@ describe('PluginHost', () => {
     const plugin = new PluginHost(api);
     return plugin
       .ready()
-      .then(() => plugin.connection?.methodDefined('dynamicMethod'))
+      .then(() => plugin.methodDefined('dynamicMethod'))
       .then((exists) => {
         expect(exists).toBe(false);
       });
@@ -139,7 +139,7 @@ describe('PluginHost', () => {
           }
         `);
       })
-      .then(() => plugin.connection?.methodDefined('dynamicMethod'))
+      .then(() => plugin.methodDefined('dynamicMethod'))
       .then((exists) => {
         expect(exists).toBe(true);
       });

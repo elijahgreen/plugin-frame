@@ -34,6 +34,6 @@ interface RemoteInterface {
 let host = new PluginHost<RemoteInterface>(apis, options);
 host.ready().then(async () => {
   await host.executeCode(code);
-  const result = await host.connection.remote.test(5);
+  const result = await host.remote.test(5);
   console.log(result);
 });
