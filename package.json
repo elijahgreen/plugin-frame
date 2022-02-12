@@ -15,7 +15,7 @@
     "build": "dts build",
     "test": "dts test",
     "lint": "dts lint",
-    "prepare": "dts build",
+    "prepare": "dts build && husky install",
     "size": "size-limit"
   },
   "husky": {
