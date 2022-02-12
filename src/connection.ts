@@ -58,7 +58,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
     this.port.close();
   }
 
-  private sendMessage<T>(message: any): Promise<T> {
+  private sendMessage<U>(message: any): Promise<U> {
     return new Promise((resolve, reject) => {
       const { port1, port2 } = new MessageChannel();
       port1.onmessage = (event: MessageEvent) => {
