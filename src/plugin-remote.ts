@@ -3,7 +3,6 @@ import { PluginInterface, RemotePluginOptions } from './model';
 
 let application: any = {};
 export class PluginRemote<T extends { [K in keyof T]: Function } = any> {
-  private port: MessagePort | undefined;
   private api: PluginInterface;
   private options: RemotePluginOptions = {};
   public connection: Connection<T> | undefined;
@@ -21,8 +20,8 @@ export class PluginRemote<T extends { [K in keyof T]: Function } = any> {
   private async initPort(event: MessageEvent) {
     switch (event.data.type) {
       case 'init':
-        this.port = event.ports[0];
-        this.connection = new Connection<T>(this.port, {
+        let port = event.ports[0];
+        this.connection = new Connection<T>(port, {
           ...this.options,
         });
         this.connection.setServiceMethods({

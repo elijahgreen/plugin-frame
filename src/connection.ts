@@ -1,4 +1,4 @@
-import { RemotePluginOptions } from '.';
+import { RemotePluginOptions } from './model';
 import { PluginInterface } from './model';
 
 const MessageType = {
