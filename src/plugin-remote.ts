@@ -35,6 +35,6 @@ export class PluginRemote<
   private runCode(code: string) {
     const scriptTag = document.createElement('script');
     scriptTag.innerHTML = code;
-    document.getElementsByTagName('body')[0].appendChild(scriptTag);
+    document.getElementsByTagName('head')[0].appendChild(scriptTag);
   }
 }
