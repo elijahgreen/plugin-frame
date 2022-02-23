@@ -145,7 +145,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
           }
         };
         if (this.options.prepareFuncs && this.options.prepareFuncs[name]) {
-          args = this.options.prepareFuncs[name](args);
+          args = this.options.prepareFuncs[name].apply(null, args);
         }
         this.port?.postMessage(
           {

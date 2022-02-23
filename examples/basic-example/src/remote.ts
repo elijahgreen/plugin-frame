@@ -18,7 +18,7 @@ const prepare = {
   networkRequest: (input: RequestInfo, init: RequestInit) => {
     if (init) {
       init = {
-        headers: init.headers,
+        headers: Object.entries(init.headers),
         mode: init.mode,
         method: init.method,
         signal: init.signal,

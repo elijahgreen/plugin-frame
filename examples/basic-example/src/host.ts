@@ -23,7 +23,7 @@ const apis = {
 
 const url = new URL(`${location.href}remote.html`);
 const code =
-  "application.networkRequest('http://api.napster.com/v2.2/artists/top?apikey=YTkxZTRhNzAtODdlNy00ZjMzLTg0MWItOTc0NmZmNjU4Yzk4').then(d => {console.log(d);});";
+  "application.networkRequest('http://api.napster.com/v2.2/artists/top?apikey=YTkxZTRhNzAtODdlNy00ZjMzLTg0MWItOTc0NmZmNjU4Yzk4', {headers: new Headers()}).then(d => {console.log(d);});";
 
 let options: HostPluginOptions = {
   frameSrc: url,
