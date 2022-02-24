@@ -1,5 +1,5 @@
 import { Connection } from './connection';
-import { PluginInterface, RemotePluginOptions } from './model';
+import { PluginInterface, RemotePluginOptions } from './types';
 
 let application: any = {};
 export class PluginRemote<

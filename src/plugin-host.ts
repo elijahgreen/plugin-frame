@@ -1,5 +1,5 @@
 import { Connection } from './connection';
-import { HostPluginOptions, PluginInterface } from './model';
+import { HostPluginOptions, PluginInterface } from './types';
 
 export class PluginHost<
   T extends { [K in keyof T]: Function } = any

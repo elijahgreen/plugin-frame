@@ -6,4 +6,4 @@ export {
   CompletePluginInterface,
   RemotePluginOptions,
   HostPluginOptions,
-} from './model';
+} from './types';
