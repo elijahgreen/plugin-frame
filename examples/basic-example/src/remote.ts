@@ -17,11 +17,14 @@ const apis = {
 const prepare = {
   networkRequest: (input: RequestInfo, init: RequestInit) => {
     if (init) {
+      const requestHeaders = Array.isArray(init.headers)
+        ? init.headers
+        : Object.entries(init.headers);
       init = {
-        headers: Object.entries(init.headers),
+        headers: requestHeaders,
         mode: init.mode,
         method: init.method,
-        signal: init.signal,
+        signal: undefined,
         credentials: init.credentials,
         body: init.body,
       };
