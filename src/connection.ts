@@ -1,4 +1,9 @@
-import { RemotePluginOptions, PluginInterface } from './types';
+import {
+  RemotePluginOptions,
+  PluginInterface,
+  PreparePluginInterface,
+  CompletePluginInterface,
+} from './types';
 
 const MessageType = {
   Method: 'method',
@@ -31,6 +36,22 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
    */
   public setLocalMethods(api: PluginInterface) {
     this.api = api;
+  }
+
+  /**
+   * Set methods that will modify arguments before sending them to remote method
+   * @param api - object containing methods
+   */
+  public setPrepareMethods(prepareMethods: PreparePluginInterface) {
+    this.options.prepareMethods = prepareMethods;
+  }
+
+  /**
+   * Set methods that will modify response after receiving it from remote method
+   * @param api - object containing methods
+   */
+  public setCompleteMethods(completeMethods: CompletePluginInterface) {
+    this.options.completeMethods = completeMethods;
   }
 
   /**
@@ -145,16 +166,16 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
           } else {
             let result = data.result;
             if (
-              this.options.completeFuncs &&
-              this.options.completeFuncs[name]
+              this.options.completeMethods &&
+              this.options.completeMethods[name]
             ) {
-              result = this.options.completeFuncs[name](result);
+              result = this.options.completeMethods[name](result);
             }
             resolve(result);
           }
         };
-        if (this.options.prepareFuncs && this.options.prepareFuncs[name]) {
-          args = this.options.prepareFuncs[name].apply(null, args);
+        if (this.options.prepareMethods && this.options.prepareMethods[name]) {
+          args = this.options.prepareMethods[name].apply(null, args);
         }
         this.port?.postMessage(
           {

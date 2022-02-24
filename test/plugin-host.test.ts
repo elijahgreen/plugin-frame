@@ -144,4 +144,38 @@ describe('PluginHost', () => {
         expect(exists).toBe(true);
       });
   });
+
+  it('should modify args with prepare method', () => {
+    const calledMethod = jest
+      .fn()
+      .mockImplementation((headers: string[][]) =>
+        headers.map((e) => typeof e)
+      );
+    const api = {
+      methodCall: calledMethod,
+    };
+    const plugin = new PluginHost(api);
+    return plugin
+      .ready()
+      .then(() => {
+        // Headers is not serializable
+        return plugin.executeCode(`
+        pluginRemote.setLocalMethods({
+          dynamicMethod: function() {
+            return application.methodCall(new Headers({'key': 'value'}));
+          }
+        });
+        pluginRemote.setPrepareMethods({
+          methodCall: (headers) => {
+            let arr = Object.entries(headers);
+            return [arr];
+          }
+        });
+        `);
+      })
+      .then(() => plugin.remote.dynamicMethod())
+      .then(() => {
+        expect(calledMethod.mock.calls.length).toBe(1);
+      });
+  });
 });

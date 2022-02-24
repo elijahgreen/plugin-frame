@@ -44,6 +44,6 @@ const complete = {
 };
 
 let remote = new PluginRemote(apis, {
-  prepareFuncs: prepare,
-  completeFuncs: complete,
+  prepareMethods: prepare,
+  completeMethods: complete,
 });

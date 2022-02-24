@@ -11,8 +11,8 @@ export interface CompletePluginInterface {
 }
 
 export interface RemotePluginOptions {
-  prepareFuncs?: PreparePluginInterface;
-  completeFuncs?: CompletePluginInterface;
+  prepareMethods?: PreparePluginInterface;
+  completeMethods?: CompletePluginInterface;
   pluginObject?: PluginInterface;
 }
 
