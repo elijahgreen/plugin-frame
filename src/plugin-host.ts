@@ -32,14 +32,27 @@ export class PluginHost<
     });
   }
 
+  /**
+   * Promise that resolves after plugin has loaded
+   * @returns Promise<void>
+   */
   public ready() {
     return this.readyPromise;
   }
 
+  /**
+   * Executes code in plugin iframe
+   *
+   * @param code - code that runs in iframe
+   * @returns Promise<void>
+   */
   public executeCode(code: string) {
     return this.callServiceMethod('runCode', code);
   }
 
+  /**
+   * Removes iframe that contains plugin code
+   */
   public destroy() {
     this.iframe.remove();
     this.close();

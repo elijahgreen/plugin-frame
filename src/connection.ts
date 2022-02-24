@@ -25,10 +25,19 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
     });
   }
 
+  /**
+   * Set method that can be called by remote iframe
+   * @param api - object containing method callable by remote iframe
+   */
   public setLocalMethods(api: PluginInterface) {
     this.api = api;
   }
 
+  /**
+   * Checks whether or not remote method is undefined
+   * @param methodName - name of method on remote
+   * @returns false if method is undefined, otherwise true
+   */
   public methodDefined(methodName: string): Promise<boolean> {
     const message = { type: MessageType.MethodDefined, name: methodName };
     return this.sendMessage(message);
@@ -44,7 +53,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
       name: methodName,
       args: args,
     };
-    return this.sendMessage(message);
+    return this.sendMessage<void>(message);
   }
 
   protected close() {
