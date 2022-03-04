@@ -13,12 +13,16 @@ export interface CompletePluginInterface {
 export interface RemotePluginOptions {
   prepareMethods?: PreparePluginInterface;
   completeMethods?: CompletePluginInterface;
+  /** Object where the remote methods are called from, by default is set to `window.application` */
   pluginObject?: PluginInterface;
 }
 
 export interface HostPluginOptions {
   frameSrc?: URL;
+  /** DOM object where the iframe will be appended */
   container?: Element;
+  /** Sandbox attributes to add to the iframe, by default it is set to use-scripts */
   sandboxAttributes?: string[];
+  /** Name of remote object, by default set to `application` (Only works when frameSrc is set to undefined) */
   remoteObjectName?: string;
 }
