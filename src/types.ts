@@ -25,4 +25,6 @@ export interface HostPluginOptions {
   sandboxAttributes?: string[];
   /** Name of remote object, by default set to `application` (Only works when frameSrc is set to undefined) */
   remoteObjectName?: string;
+  /** Class of the iframe */
+  frameClass?: string;
 }

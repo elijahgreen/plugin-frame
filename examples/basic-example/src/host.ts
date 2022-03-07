@@ -3,7 +3,7 @@ import { HostPluginOptions } from '../../../dist';
 
 const apis = {
   test: (a: number) => {
-    console.log("Let's go host: ", a);
+    console.log('Host: ', a);
     return 5;
   },
   async networkRequest(input: RequestInfo, init: RequestInit) {
@@ -23,10 +23,11 @@ const apis = {
 
 const url = new URL(`${location.href}remote.html`);
 const code =
-  "application.networkRequest('http://api.napster.com/v2.2/artists/top?apikey=YTkxZTRhNzAtODdlNy00ZjMzLTg0MWItOTc0NmZmNjU4Yzk4', {headers: new Headers()}).then(d => {console.log(d);});";
+  "application.networkRequest('http://www.example.com', {headers: new Headers()}).then(d => {console.log(d);});";
 
 let options: HostPluginOptions = {
   frameSrc: url,
+  frameClass: 'test',
 };
 interface RemoteInterface {
   test: (num: number) => Promise<number>;
@@ -35,5 +36,5 @@ let host = new PluginHost<RemoteInterface>(apis, options);
 host.ready().then(async () => {
   await host.executeCode(code);
   const result = await host.remote.test(5);
-  console.log(result);
+  console.log('Host: Returned from remote:', result);
 });

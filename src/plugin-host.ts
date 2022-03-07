@@ -60,9 +60,12 @@ export class PluginHost<
 
   private createIframe() {
     let iframe = document.createElement('iframe');
+    // Default to invisible iframe using presential attributes
     iframe.frameBorder = '0';
     iframe.width = '0';
     iframe.height = '0';
+
+    iframe.className = this.hostOptions.frameClass || '';
     (iframe as any).sandbox = this.hostOptions.sandboxAttributes?.join(' ');
     iframe.onload = this.iframeOnLoad.bind(this);
 
