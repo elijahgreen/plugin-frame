@@ -1,6 +1,6 @@
-import { PluginHost } from '../dist/index';
+import { PluginFrame } from '../dist/index';
 
-describe('PluginHost', () => {
+describe('PluginFrame', () => {
   afterEach(() => {
     let frames = document.querySelectorAll('iframe');
     frames.forEach((frame) => {
@@ -9,19 +9,19 @@ describe('PluginHost', () => {
   });
 
   it('should create iframe', () => {
-    new PluginHost({});
+    new PluginFrame({});
     const element = document.querySelectorAll('iframe')[0];
     expect(element).not.toBeNull();
   });
 
   it('should add only "allow-scripts" sandbox attribute by default', () => {
-    new PluginHost({});
+    new PluginFrame({});
     let element = document.querySelectorAll('iframe')[0];
     expect(element.sandbox.value).toEqual('allow-scripts');
   });
 
   it('should set custom sandbox attributes', () => {
-    const plugin = new PluginHost(
+    const plugin = new PluginFrame(
       {},
       { sandboxAttributes: ['allow-scripts', 'allow-popups'] }
     );
@@ -36,7 +36,7 @@ describe('PluginHost', () => {
     const api = {
       methodCall: calledMethod,
     };
-    const plugin = new PluginHost(api);
+    const plugin = new PluginFrame(api);
     return plugin
       .ready()
       .then(() => {
@@ -52,7 +52,7 @@ describe('PluginHost', () => {
     const api = {
       methodCall: calledMethod,
     };
-    const plugin = new PluginHost(api, { remoteObjectName: 'frame' });
+    const plugin = new PluginFrame(api, { remoteObjectName: 'frame' });
     return plugin
       .ready()
       .then(() => {
@@ -68,13 +68,13 @@ describe('PluginHost', () => {
     const api = {
       methodCall: calledMethod,
     };
-    const plugin = new PluginHost<{
+    const plugin = new PluginFrame<{
       dynamicMethod: (num: number) => Promise<number>;
     }>(api);
     return plugin
       .ready()
       .then(() => {
-        return plugin.executeCode(`pluginRemote.setLocalMethods({
+        return plugin.executeCode(`pluginFrame.setLocalMethods({
           dynamicMethod: function(num) {
             return application.methodCall(num);
           }
@@ -92,7 +92,7 @@ describe('PluginHost', () => {
       methodCall: calledMethod,
     };
 
-    const plugin = new PluginHost<{
+    const plugin = new PluginFrame<{
       dynamicMethod: (num: number) => Promise<number>;
     }>(api);
     return plugin
@@ -115,7 +115,7 @@ describe('PluginHost', () => {
     const api = {
       methodCall: calledMethod,
     };
-    const plugin = new PluginHost(api);
+    const plugin = new PluginFrame(api);
     return plugin
       .ready()
       .then(() => plugin.methodDefined('dynamicMethod'))
@@ -129,7 +129,7 @@ describe('PluginHost', () => {
     const api = {
       methodCall: calledMethod,
     };
-    const plugin = new PluginHost(api);
+    const plugin = new PluginFrame(api);
     return plugin
       .ready()
       .then(() => {
@@ -154,18 +154,18 @@ describe('PluginHost', () => {
     const api = {
       methodCall: calledMethod,
     };
-    const plugin = new PluginHost(api);
+    const plugin = new PluginFrame(api);
     return plugin
       .ready()
       .then(() => {
         // Headers is not serializable
         return plugin.executeCode(`
-        pluginRemote.setLocalMethods({
+        pluginFrame.setLocalMethods({
           dynamicMethod: function() {
             return application.methodCall(new Headers({'key': 'value'}));
           }
         });
-        pluginRemote.setPrepareMethods({
+        pluginFrame.setPrepareMethods({
           methodCall: (headers) => {
             let arr = Object.entries(headers);
             return [arr];

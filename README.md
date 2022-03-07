@@ -5,9 +5,9 @@ plugin-frame is a library for running untrusted code in a sandboxed iframe.
 ### Usage
 
 ```js
-import { PluginHost } from 'plugin-frame';
+import { PluginFrame } from 'plugin-frame';
 
-const host = new PluginHost({});
+const host = new PluginFrame({});
 host.ready().then(async () => {
   await host.executeCode(
     "console.log('This is running in a sandboxed iframe')"
@@ -18,7 +18,7 @@ host.ready().then(async () => {
 By default the child iframe remote methods are stored in a variable called `application`.
 
 ```js
-import { PluginHost } from 'plugin-frame';
+import { PluginFrame } from 'plugin-frame';
 
 const api = {
   test: () => {
@@ -27,7 +27,7 @@ const api = {
 };
 
 const code = 'application.test()';
-const host = new PluginHost(api);
+const host = new PluginFrame(api);
 host.ready().then(async () => {
   await host.executeCode(
     "console.log('This is running in a sandboxed iframe')"
@@ -59,7 +59,7 @@ const api = {
     return result;
   },
 };
-let host = new PluginHost(api);
+let host = new PluginFrame(api);
 host.ready().then(async () => {
   await host.executeCode(
     "application.networkRequest('https://example.org/').then(response => console.log(response))"
@@ -70,7 +70,7 @@ host.ready().then(async () => {
 Iframe Code
 
 ```js
-import { PluginRemote } from 'plugin-frame';
+import { ChildPlugin } from 'plugin-frame';
 
 const prepare = {
   networkRequest: (input: RequestInfo, init: RequestInit) => {
@@ -101,7 +101,7 @@ const complete = {
   },
 };
 
-let remote = new PluginRemote(apis, {
+let remote = new ChildPlugin(apis, {
   prepareMethods: prepare,
   completeMethods: complete,
 });
@@ -110,13 +110,13 @@ let remote = new PluginRemote(apis, {
 plugin-frame allows for new methods to be set by setting methods directly on the remote object.
 
 ```js
-import { PluginHost } from 'plugin-frame';
+import { PluginFrame } from 'plugin-frame';
 
 let code = `application.onEvent = (message: any) => {
     console.log(message);
 }`
 
-const host = new PluginHost({});
+const host = new PluginFrame({});
 host.ready().then(async () => {
     await host.executeCode(code);
     await host.remote.onEvent("message");

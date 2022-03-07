@@ -1,4 +1,4 @@
-import { PluginRemote } from 'plugin-frame';
+import { ChildPlugin } from 'plugin-frame';
 
 interface NetworkRequestInterface {
   body: Blob;
@@ -43,7 +43,7 @@ const complete = {
   },
 };
 
-let remote = new PluginRemote(apis, {
+let remote = new ChildPlugin(apis, {
   prepareMethods: prepare,
   completeMethods: complete,
 });

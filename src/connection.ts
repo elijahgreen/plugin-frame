@@ -1,5 +1,5 @@
 import {
-  RemotePluginOptions,
+  ChildPluginOptions,
   PluginInterface,
   PreparePluginInterface,
   CompletePluginInterface,
@@ -16,7 +16,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
   public remote: T;
   private port: MessagePort | undefined;
   private api: PluginInterface = {};
-  private options: RemotePluginOptions = {};
+  private options: ChildPluginOptions = {};
   private serviceMethods: PluginInterface = {};
   constructor() {
     this.remote = new Proxy<T>({} as any, {
@@ -86,7 +86,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
     this.port.onmessage = this.portOnMessage;
   }
 
-  protected setOptions(options?: RemotePluginOptions) {
+  protected setOptions(options?: ChildPluginOptions) {
     this.options = Object.assign({}, options);
     if (this.options.pluginObject) {
       Object.setPrototypeOf(this.options.pluginObject, this.remote);

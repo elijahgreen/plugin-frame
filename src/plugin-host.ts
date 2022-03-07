@@ -1,21 +1,21 @@
 import { Connection } from './connection';
-import { HostPluginOptions, PluginInterface } from './types';
+import { PluginFrameOptions, PluginInterface } from './types';
 
-export class PluginHost<
+export class PluginFrame<
   T extends { [K in keyof T]: Function } = any
 > extends Connection<T> {
   private iframe: HTMLIFrameElement;
   private remoteOrigin: string;
   private readyPromise: Promise<void>;
-  private defaultOptions: HostPluginOptions = {
+  private defaultOptions: PluginFrameOptions = {
     container: document.body,
     sandboxAttributes: ['allow-scripts'],
     remoteObjectName: 'application',
   };
-  private hostOptions: HostPluginOptions;
+  private hostOptions: PluginFrameOptions;
   private compiled = '<TEMPLATE>';
   private resolveReady: any;
-  constructor(api: PluginInterface, options?: HostPluginOptions) {
+  constructor(api: PluginInterface, options?: PluginFrameOptions) {
     super();
     this.hostOptions = Object.assign(this.defaultOptions, options);
     this.remoteOrigin = '*';
@@ -97,8 +97,8 @@ export class PluginHost<
   <script type="module">
     <INLINE>
     let remoteObject = {};
-    const pluginRemote = new PluginRemote({}, {pluginObject: remoteObject});
-    window.pluginRemote = pluginRemote;
+    const pluginFrame = new ChildPlugin({}, {pluginObject: remoteObject});
+    window.pluginFrame = pluginFrame;
     window.${this.hostOptions.remoteObjectName} = remoteObject;
   </scr` +
       `ipt>

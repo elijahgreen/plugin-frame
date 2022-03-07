@@ -1,13 +1,13 @@
 import { Connection } from './connection';
-import { PluginInterface, RemotePluginOptions } from './types';
+import { PluginInterface, ChildPluginOptions } from './types';
 
 let application: any = {};
-export class PluginRemote<
+export class ChildPlugin<
   T extends { [K in keyof T]: Function } = any
 > extends Connection<T> {
-  private remoteOptions: RemotePluginOptions = {};
+  private remoteOptions: ChildPluginOptions = {};
 
-  constructor(api: PluginInterface, options?: RemotePluginOptions) {
+  constructor(api: PluginInterface, options?: ChildPluginOptions) {
     super();
     window.addEventListener('message', this.initPort.bind(this));
     this.remoteOptions = Object.assign({}, options);

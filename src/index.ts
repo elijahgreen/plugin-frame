@@ -1,9 +1,9 @@
-export { PluginHost } from './plugin-host';
-export { PluginRemote } from './plugin-remote';
+export { PluginFrame } from './plugin-host';
+export { ChildPlugin } from './plugin-remote';
 export {
   PluginInterface,
   PreparePluginInterface,
   CompletePluginInterface,
-  RemotePluginOptions,
-  HostPluginOptions,
+  ChildPluginOptions,
+  PluginFrameOptions as HostPluginOptions,
 } from './types';

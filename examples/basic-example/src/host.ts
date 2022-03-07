@@ -1,4 +1,4 @@
-import { PluginHost } from 'plugin-frame';
+import { PluginFrame } from 'plugin-frame';
 import { HostPluginOptions } from '../../../dist';
 
 const apis = {
@@ -32,7 +32,7 @@ let options: HostPluginOptions = {
 interface RemoteInterface {
   test: (num: number) => Promise<number>;
 }
-let host = new PluginHost<RemoteInterface>(apis, options);
+let host = new PluginFrame<RemoteInterface>(apis, options);
 host.ready().then(async () => {
   await host.executeCode(code);
   const result = await host.remote.test(5);
