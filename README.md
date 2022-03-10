@@ -29,9 +29,7 @@ const api = {
 const code = 'application.test()';
 const host = new PluginFrame(api);
 host.ready().then(async () => {
-  await host.executeCode(
-    "console.log('This is running in a sandboxed iframe')"
-  );
+  await host.executeCode(code);
 });
 ```
 
