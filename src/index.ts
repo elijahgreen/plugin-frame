@@ -1,5 +1,5 @@
-export { PluginFrame } from './plugin-host';
-export { ChildPlugin } from './plugin-remote';
+export { PluginFrame } from './pluginframe';
+export { ChildPlugin } from './childplugin';
 export {
   PluginInterface,
   PreparePluginInterface,
