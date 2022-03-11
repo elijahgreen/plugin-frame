@@ -2,14 +2,41 @@
 
 plugin-frame is a library for running untrusted code in a sandboxed iframe.
 
+### Installation
+
+```sh
+npm install plugin-frame
+```
+
+If you are loading plugin-frame in an iframe from another url using `frameSrc`, an instance of `ChildPlugin` must be created. If not using a bundler, it can be loaded from a cdn.
+
+Parent:
+
+```js
+import { PluginFrame } from 'plugin-frame';
+
+const pluginFrame = new PluginFrame({}, { frameSrc: 'pluginloader.html' });
+```
+
+pluginloader.html:
+
+```html
+...
+<script type="module">
+  import { ChildPlugin } from 'https://cdn.jsdelivr.net/npm/plugin-frame@0.1.1/dist/plugin-frame.esm.js';
+  let plugin = new ChildPlugin({});
+</script>
+...
+```
+
 ### Usage
 
 ```js
 import { PluginFrame } from 'plugin-frame';
 
-const host = new PluginFrame({});
-host.ready().then(async () => {
-  await host.executeCode(
+const pluginFrame = new PluginFrame({});
+pluginFrame.ready().then(async () => {
+  await pluginFrame.executeCode(
     "console.log('This is running in a sandboxed iframe')"
   );
 });
@@ -27,9 +54,9 @@ const api = {
 };
 
 const code = 'application.test()';
-const host = new PluginFrame(api);
-host.ready().then(async () => {
-  await host.executeCode(code);
+const pluginFrame = new PluginFrame(api);
+pluginFrame.ready().then(async () => {
+  await pluginFrame.executeCode(code);
 });
 ```
 
@@ -57,9 +84,9 @@ const api = {
     return result;
   },
 };
-let host = new PluginFrame(api);
-host.ready().then(async () => {
-  await host.executeCode(
+let pluginFrame = new PluginFrame(api);
+pluginFrame.ready().then(async () => {
+  await pluginFrame.executeCode(
     "application.networkRequest('https://example.org/').then(response => console.log(response))"
   );
 });
@@ -99,7 +126,7 @@ const complete = {
   },
 };
 
-let remote = new ChildPlugin(apis, {
+let plugin = new ChildPlugin(apis, {
   prepareMethods: prepare,
   completeMethods: complete,
 });
@@ -114,10 +141,10 @@ let code = `application.onEvent = (message: any) => {
     console.log(message);
 }`
 
-const host = new PluginFrame({});
-host.ready().then(async () => {
-    await host.executeCode(code);
-    await host.remote.onEvent("message");
+const pluginFrame = new PluginFrame({});
+pluginFrame.ready().then(async () => {
+    await pluginFrame.executeCode(code);
+    await pluginFrame.remote.onEvent("message");
   );
 });
 ```
