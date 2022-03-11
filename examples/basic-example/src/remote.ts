@@ -9,7 +9,7 @@ interface NetworkRequestInterface {
 }
 const apis = {
   test: (a: number) => {
-    console.log('Remote: ', a);
+    console.log('Iframe: ', a);
     return 6;
   },
 };

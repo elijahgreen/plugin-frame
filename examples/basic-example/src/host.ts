@@ -36,5 +36,5 @@ let host = new PluginFrame<RemoteInterface>(apis, options);
 host.ready().then(async () => {
   await host.executeCode(code);
   const result = await host.remote.test(5);
-  console.log('Host: Returned from remote:', result);
+  console.log('Parent: Returned from iframe:', result);
 });
