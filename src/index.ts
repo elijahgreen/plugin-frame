@@ -5,5 +5,5 @@ export {
   PreparePluginInterface,
   CompletePluginInterface,
   ChildPluginOptions,
-  PluginFrameOptions as HostPluginOptions,
+  PluginFrameOptions,
 } from './types';
