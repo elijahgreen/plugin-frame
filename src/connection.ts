@@ -40,7 +40,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
 
   /**
    * Set methods that will modify arguments before sending them to remote method
-   * @param api - object containing methods
+   * @param prepareMethods - object containing methods
    */
   public setPrepareMethods(prepareMethods: PreparePluginInterface) {
     this.options.prepareMethods = prepareMethods;
@@ -48,7 +48,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
 
   /**
    * Set methods that will modify response after receiving it from remote method
-   * @param api - object containing methods
+   * @param completeMethods - object containing methods
    */
   public setCompleteMethods(completeMethods: CompletePluginInterface) {
     this.options.completeMethods = completeMethods;
