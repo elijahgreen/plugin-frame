@@ -14,6 +14,7 @@ export type MessageType = typeof MessageType[keyof typeof MessageType];
 
 export class Connection<T extends { [K in keyof T]: Function } = any> {
   public remote: T;
+  public hasDefined: { [K in keyof T]: () => Promise<boolean> };
   private port: MessagePort | undefined;
   private api: PluginInterface = {};
   private options: ChildPluginOptions = {};
@@ -28,6 +29,14 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
         return true;
       },
     });
+    this.hasDefined = new Proxy<{ [K in keyof T]: () => Promise<boolean> }>(
+      {} as any,
+      {
+        get: (_target, prop: any) => {
+          return () => this.methodDefined(prop);
+        },
+      }
+    );
   }
 
   /**

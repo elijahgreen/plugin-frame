@@ -110,7 +110,7 @@ describe('PluginFrame', () => {
       });
   });
 
-  it('should detect if remote has an undefined method', () => {
+  it('should detect if remote has an undefined method using methodDefined', () => {
     const calledMethod = jest.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
@@ -124,7 +124,21 @@ describe('PluginFrame', () => {
       });
   });
 
-  it('should call remote api that is dynamically added to undefined method', () => {
+  it('should detect if remote has an undefined using hasDefined', () => {
+    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const api = {
+      methodCall: calledMethod,
+    };
+    const plugin = new PluginFrame(api);
+    return plugin
+      .ready()
+      .then(() => plugin.hasDefined.dynamicMethod())
+      .then((exists) => {
+        expect(exists).toBe(false);
+      });
+  });
+
+  it('should call remote api that is dynamically added to undefined method using methodDefined', () => {
     const calledMethod = jest.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
@@ -140,6 +154,27 @@ describe('PluginFrame', () => {
         `);
       })
       .then(() => plugin.methodDefined('dynamicMethod'))
+      .then((exists) => {
+        expect(exists).toBe(true);
+      });
+  });
+
+  it('should call remote api that is dynamically added to undefined method using hasDefined', () => {
+    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const api = {
+      methodCall: calledMethod,
+    };
+    const plugin = new PluginFrame(api);
+    return plugin
+      .ready()
+      .then(() => {
+        return plugin.executeCode(`
+          application.dynamicMethod = function(num) {
+            return application.methodCall(num);
+          }
+        `);
+      })
+      .then(() => plugin.hasDefined.dynamicMethod())
       .then((exists) => {
         expect(exists).toBe(true);
       });
