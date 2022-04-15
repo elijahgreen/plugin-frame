@@ -22,6 +22,8 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
   constructor() {
     this.remote = new Proxy<T>({} as any, {
       get: (_target, prop: any) => {
+        if (prop === 'then') return null;
+
         return this.generateFunction(prop);
       },
       set: (_target, prop: any, value) => {
@@ -154,7 +156,6 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
   };
 
   private serializeError(error: any) {
-    console.log(error);
     return [...Object.keys(error), 'message'].reduce(
       (acc: Record<string, any>, it) => {
         acc[it] = error[it];
