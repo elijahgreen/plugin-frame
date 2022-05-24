@@ -18,6 +18,12 @@ export class PluginFrame<
   constructor(api: PluginInterface, options?: PluginFrameOptions) {
     super();
     this.hostOptions = Object.assign(this.defaultOptions, options);
+    if (this.hostOptions.prepareMethods) {
+      this.setPrepareMethods(this.hostOptions.prepareMethods);
+    }
+    if (this.hostOptions.completeMethods) {
+      this.setCompleteMethods(this.hostOptions.completeMethods);
+    }
     this.remoteOrigin = '*';
     if (
       this.hostOptions.sandboxAttributes?.includes('allow-same-origin') &&

@@ -1,4 +1,4 @@
-import { PluginFrame } from '../dist/index';
+import { PluginFrame, PluginFrameOptions } from '../dist/index';
 
 describe('PluginFrame', () => {
   afterEach(() => {
@@ -211,6 +211,33 @@ describe('PluginFrame', () => {
       .then(() => plugin.remote.dynamicMethod())
       .then(() => {
         expect(calledMethod.mock.calls.length).toBe(1);
+      });
+  });
+
+  it('should modify return value with complete method', () => {
+    const options: PluginFrameOptions = {
+      completeMethods: {
+        dynamicMethod: (result) => {
+          result.success = true;
+          return result;
+        },
+      },
+    };
+    const plugin = new PluginFrame({}, options);
+    return plugin
+      .ready()
+      .then(() => {
+        return plugin.executeCode(`
+        pluginFrame.setLocalMethods({
+          dynamicMethod: function() {
+            return { test: "test" };
+          }
+        });
+        `);
+      })
+      .then(() => plugin.remote.dynamicMethod())
+      .then((result) => {
+        expect(result.success).toBe(true);
       });
   });
 });

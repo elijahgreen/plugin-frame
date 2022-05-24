@@ -10,14 +10,17 @@ export interface CompletePluginInterface {
   [K: string]: (result: any) => any;
 }
 
-export interface ChildPluginOptions {
+export interface ConnectionOptions {
   prepareMethods?: PreparePluginInterface;
   completeMethods?: CompletePluginInterface;
+}
+
+export interface ChildPluginOptions extends ConnectionOptions {
   /** Object where the remote methods are called from, by default is set to `window.application` */
   pluginObject?: PluginInterface;
 }
 
-export interface PluginFrameOptions {
+export interface PluginFrameOptions extends ConnectionOptions {
   frameSrc?: URL;
   /** DOM object where the iframe will be appended */
   container?: Element;
