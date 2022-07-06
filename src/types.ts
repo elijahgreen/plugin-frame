@@ -24,10 +24,12 @@ export interface PluginFrameOptions extends ConnectionOptions {
   frameSrc?: URL;
   /** DOM object where the iframe will be appended */
   container?: Element;
-  /** Sandbox attributes to add to the iframe, by default it is set to use-scripts */
+  /** Sandbox attributes to add to the iframe, by default it is set to allow-scripts */
   sandboxAttributes?: string[];
   /** Name of remote object, by default set to `application` (Only works when frameSrc is set to undefined) */
   remoteObjectName?: string;
   /** Class of the iframe */
   frameClass?: string;
+  /** Iframe allow attribute */
+  allow?: string;
 }

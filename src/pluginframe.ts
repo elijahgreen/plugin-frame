@@ -75,6 +75,10 @@ export class PluginFrame<
     (iframe as any).sandbox = this.hostOptions.sandboxAttributes?.join(' ');
     iframe.onload = this.iframeOnLoad.bind(this);
 
+    if (this.hostOptions.allow) {
+      iframe.allow = this.hostOptions.allow;
+    }
+
     if (this.hostOptions.frameSrc) {
       iframe.src = this.hostOptions.frameSrc.href;
       this.hostOptions.container?.append(iframe);

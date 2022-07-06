@@ -130,7 +130,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
           const result = await method.apply(null, args);
           event.ports[0].postMessage({ result: result });
         } catch (e) {
-          event.ports[0].postMessage({ error: this.serializeError(e) });
+          this.sendError(event.ports[0], e);
         }
         break;
       case MessageType.MethodDefined:
@@ -138,7 +138,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
           const exists = !!this.api[event.data.name];
           event.ports[0].postMessage({ result: exists });
         } catch (e) {
-          event.ports[0].postMessage({ error: this.serializeError(e) });
+          this.sendError(event.ports[0], e);
         }
         break;
       case MessageType.ServiceMethod:
@@ -149,11 +149,24 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
           const result = await method.apply(null, args);
           event.ports[0].postMessage({ result: result });
         } catch (e) {
-          event.ports[0].postMessage({ error: this.serializeError(e) });
+          this.sendError(event.ports[0], e);
         }
         break;
     }
   };
+
+  private sendError(port: MessagePort, error: any) {
+    const serializedError = this.serializeError(error);
+    try {
+      port.postMessage({ error: this.serializeError(serializedError) });
+    } catch (e) {
+      console.log('Could not send error: ', e);
+      if (e instanceof DOMException) {
+        const stringError = JSON.parse(JSON.stringify(serializedError));
+        port.postMessage({ error: stringError });
+      }
+    }
+  }
 
   private serializeError(error: any) {
     return [...Object.keys(error), 'message'].reduce(

@@ -31,6 +31,12 @@ describe('PluginFrame', () => {
     });
   });
 
+  it('should set custom allow attribute', () => {
+    const plugin = new PluginFrame({}, { allow: 'autoplay' });
+    let element = document.querySelectorAll('iframe')[0];
+    expect(element.allow).toEqual('autoplay');
+  });
+
   it('should call local api', () => {
     const calledMethod = jest.fn().mockImplementation((a) => a + 2);
     const api = {
@@ -238,6 +244,44 @@ describe('PluginFrame', () => {
       .then(() => plugin.remote.dynamicMethod())
       .then((result) => {
         expect(result.success).toBe(true);
+      });
+  });
+
+  it('should respond to errors', () => {
+    const plugin = new PluginFrame({});
+    return plugin
+      .ready()
+      .then(() => {
+        return plugin.executeCode(`
+        pluginFrame.setLocalMethods({
+          dynamicMethod: async function() {
+            throw new Error("Error");
+          }
+        });
+        `);
+      })
+      .then(() => plugin.remote.dynamicMethod())
+      .catch((error: Error) => {
+        expect(error.message).toBe('Error');
+      });
+  });
+
+  it('should respond to errors', () => {
+    const plugin = new PluginFrame({});
+    return plugin
+      .ready()
+      .then(() => {
+        return plugin.executeCode(`
+        pluginFrame.setLocalMethods({
+          dynamicMethod: async function() {
+            throw new Error("Error");
+          }
+        });
+        `);
+      })
+      .then(() => plugin.remote.dynamicMethod())
+      .catch((error: Error) => {
+        expect(error.message).toBe('Error');
       });
   });
 });
