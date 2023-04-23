@@ -53,11 +53,10 @@
     }
   ],
   "devDependencies": {
-    "@kayahr/jest-electron-runner": "^4.1.0",
-    "@tsconfig/recommended": "^1.0.1",
+    "@kayahr/jest-electron-runner": "^29.3.1",
     "@size-limit/preset-small-lib": "^7.0.5",
-    "dts-cli": "^1.2.0",
-    "electron": "^16.0.6",
+    "@tsconfig/recommended": "^1.0.1",
+    "dts-cli": "^2.0.2",
     "husky": "^7.0.4",
     "size-limit": "^7.0.5",
     "tslib": "^2.3.1",
