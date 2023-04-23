@@ -5,12 +5,12 @@ import {
   CompletePluginInterface,
 } from './types';
 
-const MessageType = {
+const MessageTypes = {
   Method: 'method',
   MethodDefined: 'method-defined',
   ServiceMethod: 'service-method',
 } as const;
-export type MessageType = typeof MessageType[keyof typeof MessageType];
+export type MessageType = (typeof MessageTypes)[keyof typeof MessageTypes];
 
 export class Connection<T extends { [K in keyof T]: Function } = any> {
   public remote: T;
@@ -71,7 +71,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
    * @returns false if method is undefined, otherwise true
    */
   public methodDefined(methodName: string): Promise<boolean> {
-    const message = { type: MessageType.MethodDefined, name: methodName };
+    const message = { type: MessageTypes.MethodDefined, name: methodName };
     return this.sendMessage(message);
   }
 
@@ -81,7 +81,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
 
   protected callServiceMethod(methodName: string, ...args: any[]) {
     const message = {
-      type: MessageType.ServiceMethod,
+      type: MessageTypes.ServiceMethod,
       name: methodName,
       args: args,
     };
@@ -122,7 +122,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
 
   private portOnMessage = async (event: MessageEvent) => {
     switch (event.data.type) {
-      case MessageType.Method:
+      case MessageTypes.Method:
         try {
           const name = event.data.name;
           const method = this.api[name];
@@ -133,7 +133,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
           this.sendError(event.ports[0], e);
         }
         break;
-      case MessageType.MethodDefined:
+      case MessageTypes.MethodDefined:
         try {
           const exists = !!this.api[event.data.name];
           event.ports[0].postMessage({ result: exists });
@@ -141,7 +141,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
           this.sendError(event.ports[0], e);
         }
         break;
-      case MessageType.ServiceMethod:
+      case MessageTypes.ServiceMethod:
         try {
           const name = event.data.name;
           const method = this.serviceMethods[name];
@@ -202,7 +202,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
         }
         this.port?.postMessage(
           {
-            type: MessageType.Method,
+            type: MessageTypes.Method,
             name: name,
             args: args,
           },

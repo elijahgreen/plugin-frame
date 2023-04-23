@@ -32,7 +32,7 @@ describe('PluginFrame', () => {
   });
 
   it('should set custom allow attribute', () => {
-    const plugin = new PluginFrame({}, { allow: 'autoplay' });
+    new PluginFrame({}, { allow: 'autoplay' });
     let element = document.querySelectorAll('iframe')[0];
     expect(element.allow).toEqual('autoplay');
   });
