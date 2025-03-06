@@ -1,7 +1,7 @@
 {
   "name": "plugin-frame",
   "license": "MIT",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "homepage": "https://github.com/elijahgreen/plugin-frame",
   "author": "Elijah Green",
   "type": "module",
