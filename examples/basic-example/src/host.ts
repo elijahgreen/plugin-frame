@@ -11,14 +11,14 @@ const apis = {
 const url = new URL(`${location.href}remote.html`);
 const code = 'application.test(7);';
 
-let options: PluginFrameOptions = {
+const options: PluginFrameOptions = {
   frameSrc: url,
   frameClass: 'test',
 };
 interface RemoteInterface {
   test: (num: number) => Promise<number>;
 }
-let pluginFrame = new PluginFrame<RemoteInterface>(apis, options);
+const pluginFrame = new PluginFrame<RemoteInterface>(apis, options);
 pluginFrame.ready().then(async () => {
   await pluginFrame.executeCode(code);
   const result = await pluginFrame.remote.test(5);

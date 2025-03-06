@@ -7,4 +7,4 @@ const apis = {
   },
 };
 
-let plugin = new ChildPlugin(apis);
+new ChildPlugin(apis);

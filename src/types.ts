@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface PluginInterface {
-  [K: string]: Function;
+  [K: string]: (...args: any[]) => any;
 }
 
 export interface PreparePluginInterface {

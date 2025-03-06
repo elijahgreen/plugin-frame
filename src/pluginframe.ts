@@ -1,10 +1,10 @@
 import { Connection } from './childplugin';
 import { PluginFrameOptions, PluginInterface } from './types';
-import compiledChildPlugin from "./childplugin.ts?inline";
-
+import compiledChildPlugin from './childplugin.ts?inline';
 
 export class PluginFrame<
-  T extends { [K in keyof T]: Function } = any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends { [K in keyof T]: (...args: any[]) => any } = any,
 > extends Connection<T> {
   private iframe: HTMLIFrameElement;
   private remoteOrigin: string;
@@ -15,6 +15,7 @@ export class PluginFrame<
     remoteObjectName: 'application',
   };
   private hostOptions: PluginFrameOptions;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private resolveReady: any;
   constructor(api: PluginInterface, options?: PluginFrameOptions) {
     super();
@@ -66,14 +67,15 @@ export class PluginFrame<
   }
 
   private createIframe() {
-    let iframe = document.createElement('iframe');
+    const iframe = document.createElement('iframe');
     // Default to invisible iframe using presential attributes
     iframe.frameBorder = '0';
     iframe.width = '0';
     iframe.height = '0';
 
     iframe.className = this.hostOptions.frameClass || '';
-    (iframe as any).sandbox = this.hostOptions.sandboxAttributes?.join(' ');
+    (iframe as HTMLIFrameElement).sandbox =
+      this.hostOptions.sandboxAttributes?.join(' ') || '';
     iframe.onload = this.iframeOnLoad.bind(this);
 
     if (this.hostOptions.allow) {
@@ -94,22 +96,21 @@ export class PluginFrame<
 
   private getSrcDoc() {
     return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <script type="module">
-    ${compiledChildPlugin};
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <script type="module">
+      ${compiledChildPlugin};
 
-    let remoteObject = {};
-    const pluginFrame = new ChildPlugin({}, {pluginObject: remoteObject});
-    window.pluginFrame = pluginFrame;
-    window.${this.hostOptions.remoteObjectName} = remoteObject;
-  </scr` +
-      `ipt>
-</head>
-<body></body>
-</html>
+      let remoteObject = {};
+      const pluginFrame = new ChildPlugin({}, {pluginObject: remoteObject});
+      window.pluginFrame = pluginFrame;
+      window.${this.hostOptions.remoteObjectName} = remoteObject;
+    </script>
+  </head>
+  <body></body>
+  </html>
   `;
   }
 

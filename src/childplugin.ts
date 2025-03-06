@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ChildPluginOptions,
   PluginInterface,
@@ -5,16 +6,17 @@ import {
   CompletePluginInterface,
 } from './types';
 
-type MessageType =  'method' | 'method-defined' | 'service-method';
+type MessageType = 'method' | 'method-defined' | 'service-method';
 
 type Message = {
   type: MessageType;
   name: string;
   args?: any[];
-}
+};
 
-export class Connection<T extends { [K in keyof T]: Function } = any> {
-
+export class Connection<
+  T extends { [K in keyof T]: (...args: any[]) => any } = any,
+> {
   public remote: T;
   public hasDefined: { [K in keyof T]: () => Promise<boolean> };
   private port: MessagePort | undefined;
@@ -129,7 +131,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
           const name = event.data.name;
           const method = this.api[name];
           const args = event.data.args;
-          const result = await method.apply(null, args);
+          const result = await method(...args);
           event.ports[0].postMessage({ result: result });
         } catch (e) {
           this.sendError(event.ports[0], e);
@@ -148,7 +150,7 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
           const name = event.data.name;
           const method = this.serviceMethods[name];
           const args = event.data.args;
-          const result = await method.apply(null, args);
+          const result = await method(...args);
           event.ports[0].postMessage({ result: result });
         } catch (e) {
           this.sendError(event.ports[0], e);
@@ -215,10 +217,9 @@ export class Connection<T extends { [K in keyof T]: Function } = any> {
   }
 }
 
-
-let application: any = {};
+const application: any = {};
 export default class ChildPlugin<
-  T extends { [K in keyof T]: Function } = any
+  T extends { [K in keyof T]: (...args: any[]) => any } = any,
 > extends Connection<T> {
   private remoteOptions: ChildPluginOptions = {};
 
@@ -236,7 +237,7 @@ export default class ChildPlugin<
 
   private async initPort(event: MessageEvent) {
     switch (event.data.type) {
-      case 'init':
+      case 'init': {
         const port = event.ports[0];
         this.setPort(port);
         this.setServiceMethods({
@@ -244,6 +245,7 @@ export default class ChildPlugin<
         });
         await this.callServiceMethod('connected');
         break;
+      }
     }
   }
 

@@ -2,16 +2,17 @@ import { resolve } from 'path';
 import { defineConfig, Plugin } from 'vite';
 import dts from 'vite-plugin-dts';
 
-function noMinifyPlugin(): Plugin { return {
+function noMinifyPlugin(): Plugin {
+  return {
     name: 'no-minify-inline',
     transform(code, id) {
       if (id.endsWith('?inline')) {
         return {
           code: `export default ${JSON.stringify(code)}`,
-          map: null
+          map: null,
         };
       }
-    }
+    },
   };
 }
 

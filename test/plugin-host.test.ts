@@ -1,8 +1,8 @@
-import { PluginFrame, PluginFrameOptions } from "../src"
-import { describe, expect, afterEach, it, vi } from 'vitest'
+import { PluginFrame, PluginFrameOptions } from '../src';
+import { describe, expect, afterEach, it, vi } from 'vitest';
 describe('PluginFrame', () => {
   afterEach(() => {
-    let frames = document.querySelectorAll('iframe');
+    const frames = document.querySelectorAll('iframe');
     frames.forEach((frame) => {
       frame.remove();
     });
@@ -16,7 +16,7 @@ describe('PluginFrame', () => {
 
   it('should add only "allow-scripts" sandbox attribute by default', () => {
     new PluginFrame({});
-    let element = document.querySelectorAll('iframe')[0];
+    const element = document.querySelectorAll('iframe')[0];
     expect(element.sandbox.value).toEqual('allow-scripts');
   });
 
@@ -26,14 +26,14 @@ describe('PluginFrame', () => {
       { sandboxAttributes: ['allow-scripts', 'allow-popups'] }
     );
     return plugin.ready().then(() => {
-      let element = document.querySelectorAll('iframe')[0];
+      const element = document.querySelectorAll('iframe')[0];
       expect(element.sandbox.value).toContain('allow-popups');
     });
   });
 
   it('should set custom allow attribute', () => {
     new PluginFrame({}, { allow: 'autoplay' });
-    let element = document.querySelectorAll('iframe')[0];
+    const element = document.querySelectorAll('iframe')[0];
     expect(element.allow).toEqual('autoplay');
   });
 
