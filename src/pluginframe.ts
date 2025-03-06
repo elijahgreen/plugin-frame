@@ -1,5 +1,7 @@
-import { Connection } from './connection';
+import { Connection } from './childplugin';
 import { PluginFrameOptions, PluginInterface } from './types';
+import compiledChildPlugin from "./childplugin.ts?inline";
+
 
 export class PluginFrame<
   T extends { [K in keyof T]: Function } = any
@@ -13,7 +15,6 @@ export class PluginFrame<
     remoteObjectName: 'application',
   };
   private hostOptions: PluginFrameOptions;
-  private compiled = '<TEMPLATE>';
   private resolveReady: any;
   constructor(api: PluginInterface, options?: PluginFrameOptions) {
     super();
@@ -92,20 +93,14 @@ export class PluginFrame<
   }
 
   private getSrcDoc() {
-    // var exports = {}
-    // is used to fix electron tests
-    // script close tag must be seperated in
-    // order to avoid parser error
-    let srcdoc =
-      `
+    return `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <script>var exports = {};</scr` +
-      `ipt>
   <script type="module">
-    <INLINE>
+    ${compiledChildPlugin};
+
     let remoteObject = {};
     const pluginFrame = new ChildPlugin({}, {pluginObject: remoteObject});
     window.pluginFrame = pluginFrame;
@@ -116,10 +111,6 @@ export class PluginFrame<
 <body></body>
 </html>
   `;
-
-    srcdoc = srcdoc.replace('<INLINE>', this.compiled);
-
-    return srcdoc;
   }
 
   private iframeOnLoad() {

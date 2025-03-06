@@ -1,6 +1,6 @@
 export { PluginFrame } from './pluginframe';
-export { ChildPlugin } from './childplugin';
-export {
+export { default as ChildPlugin } from './childplugin';
+export type {
   PluginInterface,
   PreparePluginInterface,
   CompletePluginInterface,

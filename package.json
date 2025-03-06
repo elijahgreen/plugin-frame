@@ -1,39 +1,32 @@
 {
-  "version": "0.5.1",
+  "name": "plugin-frame",
   "license": "MIT",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "version": "0.5.1",
+  "homepage": "https://github.com/elijahgreen/plugin-frame",
+  "author": "Elijah Green",
+  "type": "module",
+  "main": "./dist/plugin-frame.js",
+  "types": "./dist/index.d.ts",
   "engines": {
     "node": ">=12"
   },
   "scripts": {
-    "start": "dts watch",
-    "build": "dts build",
-    "test": "dts test",
-    "lint": "dts lint",
-    "prepare": "dts build && husky install",
-    "size": "size-limit"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:browser": "vitest --workspace=vitest.workspace.ts"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "dts lint"
-    }
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "@vitest/browser": "^3.0.7",
+    "happy-dom": "^17.2.2",
+    "playwright": "^1.50.1",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
+    "vite-plugin-dts": "^4.5.3",
+    "vitest": "^3.0.7"
   },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "endOfLine": "auto"
-  },
-  "name": "plugin-frame",
-  "homepage": "https://github.com/elijahgreen/plugin-frame",
-  "author": "Elijah Green",
-  "module": "dist/plugin-frame.esm.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elijahgreen/plugin-frame.git"
@@ -46,22 +39,6 @@
     "web",
     "plugin"
   ],
-  "size-limit": [
-    {
-      "path": "dist/plugin-frame.cjs.production.min.js",
-      "limit": "10 KB"
-    }
-  ],
-  "devDependencies": {
-    "@kayahr/jest-electron-runner": "^29.3.1",
-    "@size-limit/preset-small-lib": "^7.0.5",
-    "@tsconfig/recommended": "^1.0.1",
-    "dts-cli": "^2.0.2",
-    "husky": "^7.0.4",
-    "size-limit": "^7.0.5",
-    "tslib": "^2.3.1",
-    "typescript": "^4.5.5"
-  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

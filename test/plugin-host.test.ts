@@ -1,5 +1,5 @@
-import { PluginFrame, PluginFrameOptions } from '../dist/index';
-
+import { PluginFrame, PluginFrameOptions } from "../src"
+import { describe, expect, afterEach, it, vi } from 'vitest'
 describe('PluginFrame', () => {
   afterEach(() => {
     let frames = document.querySelectorAll('iframe');
@@ -38,7 +38,7 @@ describe('PluginFrame', () => {
   });
 
   it('should call local api', () => {
-    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const calledMethod = vi.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };
@@ -54,7 +54,7 @@ describe('PluginFrame', () => {
   });
 
   it('should call local api with user supplied remote object name', () => {
-    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const calledMethod = vi.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };
@@ -70,7 +70,7 @@ describe('PluginFrame', () => {
   });
 
   it('should call remote api after setting methods', () => {
-    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const calledMethod = vi.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };
@@ -93,7 +93,7 @@ describe('PluginFrame', () => {
   });
 
   it('should call remote api that is dynamically added to undefined method', () => {
-    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const calledMethod = vi.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };
@@ -117,7 +117,7 @@ describe('PluginFrame', () => {
   });
 
   it('should detect if remote has an undefined method using methodDefined', () => {
-    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const calledMethod = vi.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };
@@ -131,7 +131,7 @@ describe('PluginFrame', () => {
   });
 
   it('should detect if remote has an undefined using hasDefined', () => {
-    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const calledMethod = vi.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };
@@ -145,7 +145,7 @@ describe('PluginFrame', () => {
   });
 
   it('should call remote api that is dynamically added to undefined method using methodDefined', () => {
-    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const calledMethod = vi.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };
@@ -166,7 +166,7 @@ describe('PluginFrame', () => {
   });
 
   it('should call remote api that is dynamically added to undefined method using hasDefined', () => {
-    const calledMethod = jest.fn().mockImplementation((a) => a + 2);
+    const calledMethod = vi.fn().mockImplementation((a) => a + 2);
     const api = {
       methodCall: calledMethod,
     };
@@ -187,7 +187,7 @@ describe('PluginFrame', () => {
   });
 
   it('should modify args with prepare method', () => {
-    const calledMethod = jest
+    const calledMethod = vi
       .fn()
       .mockImplementation((headers: string[][]) =>
         headers.map((e) => typeof e)
