@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Connection } from './childplugin';
 import { PluginFrameOptions, PluginInterface } from './types';
 import compiledChildPlugin from './childplugin.ts?inline';
 
 export class PluginFrame<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends { [K in keyof T]: (...args: any[]) => any } = any,
 > extends Connection<T> {
   private iframe: HTMLIFrameElement;
@@ -15,7 +15,6 @@ export class PluginFrame<
     remoteObjectName: 'application',
   };
   private hostOptions: PluginFrameOptions;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private resolveReady: any;
   constructor(api: PluginInterface, options?: PluginFrameOptions) {
     super();
@@ -74,7 +73,7 @@ export class PluginFrame<
     iframe.height = '0';
 
     iframe.className = this.hostOptions.frameClass || '';
-    (iframe as HTMLIFrameElement).sandbox =
+    (iframe as any).sandbox =
       this.hostOptions.sandboxAttributes?.join(' ') || '';
     iframe.onload = this.iframeOnLoad.bind(this);
 
