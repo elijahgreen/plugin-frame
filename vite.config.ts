@@ -27,4 +27,19 @@ export default defineConfig({
     },
   },
   plugins: [dts(), noMinifyPlugin()],
+  test: {
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'browser',
+          browser: {
+            enabled: true,
+            provider: 'playwright',
+            instances: [{ browser: 'chromium' }],
+          },
+        },
+      },
+    ],
+  },
 });
