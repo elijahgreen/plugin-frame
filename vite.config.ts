@@ -16,7 +16,8 @@ function minifyInlinePlugin(): Plugin {
           legalComments: 'none',
         });
         // Wrap the IIFE output to expose ChildPlugin as a global
-        const wrappedCode = result.code + '\nvar ChildPlugin = ChildPluginModule.default;';
+        const wrappedCode =
+          result.code + '\nvar ChildPlugin = ChildPluginModule.default;';
         return {
           code: `export default ${JSON.stringify(wrappedCode)}`,
           map: null,
