@@ -1,4 +1,4 @@
-import { ChildPlugin } from 'plugin-frame';
+import { ChildPlugin } from 'plugin-frame/child';
 
 const apis = {
   test: (a: number) => {

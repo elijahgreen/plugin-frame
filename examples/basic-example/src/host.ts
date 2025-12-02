@@ -1,4 +1,4 @@
-import { PluginFrame, PluginFrameOptions } from 'plugin-frame';
+import { PluginFrame, PluginFrameOptions } from 'plugin-frame/host';
 
 const apis = {
   test: (a: number) => {
@@ -13,6 +13,7 @@ const code = 'application.test(7);';
 const options: PluginFrameOptions = {
   frameSrc: url,
   frameClass: 'test',
+  sandboxAttributes: ['allow-scripts', 'allow-same-origin'],
 };
 interface RemoteInterface {
   test: (num: number) => Promise<number>;
