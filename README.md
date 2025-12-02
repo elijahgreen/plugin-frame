@@ -23,7 +23,7 @@ pluginloader.html:
 ```html
 ...
 <script type="module">
-  import { ChildPlugin } from 'https://cdn.jsdelivr.net/npm/plugin-frame@0.1.1/dist/plugin-frame.esm.js';
+  import { ChildPlugin } from 'https://cdn.jsdelivr.net/npm/plugin-frame@1.0.0/dist/child.js';
   let plugin = new ChildPlugin({});
 </script>
 ...
