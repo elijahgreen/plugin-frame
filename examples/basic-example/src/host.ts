@@ -1,5 +1,4 @@
-import { PluginFrame } from 'plugin-frame';
-import { PluginFrameOptions } from '../../../dist';
+import { PluginFrame, PluginFrameOptions } from 'plugin-frame';
 
 const apis = {
   test: (a: number) => {
