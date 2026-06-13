@@ -1,7 +1,8 @@
 import { resolve } from 'path';
 import { defineConfig, Plugin } from 'vite';
 import { transform } from 'esbuild';
-import dts from 'vite-plugin-dts';
+import dts from 'unplugin-dts/vite';
+import { playwright } from '@vitest/browser-playwright';
 
 function minifyInlinePlugin(): Plugin {
   return {
@@ -53,7 +54,7 @@ export default defineConfig({
           name: 'browser',
           browser: {
             enabled: true,
-            provider: 'playwright',
+            provider: playwright(),
             instances: [{ browser: 'chromium' }],
           },
         },
