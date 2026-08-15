@@ -29,6 +29,17 @@ pluginloader.html:
 ...
 ```
 
+### Releasing
+
+CI publishes to npm on tag push via npm OIDC trusted publishing — there is no `NPM_TOKEN` secret:
+
+```sh
+npm version <patch|minor|major>
+git push --follow-tags
+```
+
+`.github/workflows/publish.yml` lints, builds, tests, verifies the tag matches `package.json`, publishes, then cuts a GitHub Release.
+
 ### Usage
 
 ```js

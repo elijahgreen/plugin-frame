@@ -1,0 +1,72 @@
+name: Publish to npm
+
+# Release flow: bump the version locally, which tags the commit, then push the
+# tag — CI publishes it.
+#
+#   npm version <patch|minor|major>
+#   git push --follow-tags
+#
+# Publishing uses npm OIDC trusted publishing: no NPM_TOKEN secret, and
+# provenance attestations are generated automatically. Configure this repo +
+# workflow as a trusted publisher once at:
+#   npmjs.com -> plugin-frame -> Settings -> Trusted Publisher
+
+on:
+  push:
+    tags:
+      - 'v*'
+  # Allow re-running a publish by hand against an already-pushed tag.
+  workflow_dispatch:
+
+permissions:
+  id-token: write # required for OIDC trusted publishing
+  contents: write # needed to create the GitHub Release
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          # Node 24 bundles npm >= 11.5.1, which trusted publishing requires.
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false # never cache in release builds
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      # dist/ is gitignored, so the published tarball comes from this build.
+      # `prepublishOnly` rebuilds it at publish time; running it here fails fast.
+      - run: npm run build
+
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm test
+
+      # Guard against a mistagged push: the tag (v1.2.3) must match
+      # package.json. `npm version` keeps these in sync, so this only trips on
+      # a hand-made tag. Skipped for manual workflow_dispatch runs.
+      - name: Verify tag matches package.json version
+        if: github.event_name == 'push'
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg="$(node -p "require('./package.json').version")"
+          if [ "$tag" != "$pkg" ]; then
+            echo "::error::Tag v$tag does not match package.json version $pkg"
+            exit 1
+          fi
+
+      - run: npm publish
+
+      # Publish succeeded, so cut a GitHub Release with auto-generated notes.
+      # Uses the built-in gh CLI (no third-party action). Guarded to `push` so
+      # a manual workflow_dispatch re-run won't fail on an existing release.
+      - name: Create GitHub Release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --generate-notes --verify-tag
